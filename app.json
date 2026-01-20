@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "price-tag",
-    "slug": "price-tag",
+    "name": "music-box",
+    "slug": "music-box",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
