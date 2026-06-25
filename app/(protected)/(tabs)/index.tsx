@@ -1,6 +1,6 @@
 import { SearchBar } from "@/components/SearchBar";
-import { getTopAlbums } from "@/services/getTopCharts";
-import { searchAlbums } from "@/services/searchAlbum";
+import { getTopAlbums } from "@/services/album/getTopAlbums";
+import { searchAlbums } from "@/services/album/searchAlbum";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";

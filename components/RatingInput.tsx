@@ -19,7 +19,12 @@ export function RatingInput({
             style={
               star <= value
                 ? [styles.filled, { fontSize: size }]
-                : [styles.empty, { fontSize: size }]
+                : [
+                    styles.empty,
+                    {
+                      fontSize: size,
+                    },
+                  ]
             }
           >
             ★
@@ -33,8 +38,6 @@ export function RatingInput({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "center",
-    padding: 0,
   },
   filled: {
     color: "#FFD700",

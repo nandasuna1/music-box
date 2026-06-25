@@ -1,5 +1,5 @@
 // src/services/getTopAlbums.ts
-import { deezerApi } from "./deezer";
+import { deezerApi } from "../deezer";
 
 export type DeezerAlbum = {
   id: number;

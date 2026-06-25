@@ -1,6 +1,6 @@
 // src/services/getAlbumById.ts
 import { formatReleaseDate } from "@/utils/dataFormatter";
-import { deezerApi } from "./deezer";
+import { deezerApi } from "../deezer";
 
 export type DeezerTrack = {
   id: number;
