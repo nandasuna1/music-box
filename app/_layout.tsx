@@ -14,10 +14,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 GoogleSignin.configure({
-  iosClientId:
-    "843337715350-caso2ra8p9j2nvu7k80dmma3f1as0j8s.apps.googleusercontent.com",
-  webClientId:
-    "843337715350-b1qdt1uk7eph8gk3hgv6drk6k2u5p2ns.apps.googleusercontent.com",
+  iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID,
+  webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
   scopes: ["profile", "email"],
   offlineAccess: false,
 });

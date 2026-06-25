@@ -4,13 +4,13 @@ import { getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCnf_-PGjA-K9N1SFT1CImmmwXN4mmAzX0",
-  authDomain: "music-box-a8b6a.firebaseapp.com",
-  projectId: "music-box-a8b6a",
-  storageBucket: "music-box-a8b6a.firebasestorage.app",
-  messagingSenderId: "843337715350",
-  appId: "1:843337715350:web:9041589dd4af91f41f7cb7",
-  measurementId: "G-7P4RGCXBF8",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
