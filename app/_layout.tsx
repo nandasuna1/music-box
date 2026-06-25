@@ -7,27 +7,33 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { useColorScheme } from "@/hooks/styling/use-color-scheme";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+GoogleSignin.configure({
+  iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID,
+  webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+  scopes: ["profile", "email"],
+  offlineAccess: false,
+});
 
 const queryClient = new QueryClient();
-
-export const unstable_settings = {
-  anchor: "(tabs)",
-};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
-  // migrateOldRatings();
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <StatusBar style="auto" />
+        <SafeAreaProvider>
+          <AuthProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+            <StatusBar style="auto" />
+          </AuthProvider>
+        </SafeAreaProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

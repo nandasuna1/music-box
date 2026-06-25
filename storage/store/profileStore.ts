@@ -1,70 +1,48 @@
-// src/store/profileStore.ts
+import { getUserRecentReviews } from "@/services/reviews/getUserRecentReviews";
+import { getUserProfile } from "@/services/user/getUserProfile";
 import { AlbumRating } from "@/types/Album";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserProfile } from "@/types/User";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-
-export type AlbumReview = {
-  albumId: number;
-  rating: number;
-  comment?: string;
-  reviewedAt: string;
-};
-
-type ListenLaterAlbum = {
-  albumId: number;
-  addedAt: string;
-};
 
 type ProfileStore = {
-  reviews: AlbumRating[];
-  listenLater: ListenLaterAlbum[];
+  recentReviews: AlbumRating[];
+  listenLaterPreview: AlbumRating[];
+  profile: UserProfile | null;
 
-  upsertReview: (review: AlbumRating) => void;
-  getReviewByAlbumId: (albumId: number) => AlbumRating | undefined;
+  loading: boolean;
 
-  addToListenLater: (albumId: number) => void;
+  loadProfile: (userId: string) => Promise<void>;
+  reset: () => void;
 };
 
-export const useProfileStore = create<ProfileStore>()(
-  persist(
-    (set, get) => ({
-      reviews: [],
-      listenLater: [],
+export const useProfileStore = create<ProfileStore>((set) => ({
+  recentReviews: [],
+  listenLaterPreview: [],
+  profile: null,
 
-      upsertReview: (review) =>
-        set((state) => {
-          const exists = state.reviews.some(
-            (r) => r.albumId === review.albumId,
-          );
+  loading: false,
 
-          if (exists) {
-            return {
-              reviews: state.reviews.map((r) =>
-                r.albumId === review.albumId ? review : r,
-              ),
-            };
-          }
+  async loadProfile(userId) {
+    set({ loading: true });
 
-          return {
-            reviews: [...state.reviews, review],
-          };
-        }),
+    const [recentReviews, profile] = await Promise.all([
+      getUserRecentReviews(userId, 3),
+      getUserProfile(userId),
+    ]);
 
-      getReviewByAlbumId: (albumId) =>
-        get().reviews.find((r) => r.albumId === albumId),
+    set({
+      recentReviews,
+      profile,
+      loading: false,
+    });
+  },
 
-      addToListenLater: (albumId) =>
-        set((state) => ({
-          listenLater: [
-            ...state.listenLater,
-            { albumId, addedAt: new Date().toISOString() },
-          ],
-        })),
-    }),
-    {
-      name: "profile-storage",
-      storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
-);
+  reset() {
+    set({
+      recentReviews: [],
+      listenLaterPreview: [],
+      profile: null,
+      loading: false,
+    });
+  },
+}));

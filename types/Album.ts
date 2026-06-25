@@ -12,10 +12,3 @@ export type AlbumRating = {
   comment?: string;
   ratedAt: string;
 };
-
-export type AlbumReview = {
-  albumId: number;
-  rating: number;
-  comment?: string;
-  reviewedAt: string;
-};
