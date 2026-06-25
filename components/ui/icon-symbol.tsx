@@ -22,6 +22,7 @@ const MAPPING = {
   "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
   "music.house": "library-music",
+  "bookmark.fill": "bookmark",
 } as IconMapping;
 
 /**

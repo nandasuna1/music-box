@@ -1,5 +1,7 @@
-import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+/* ───────────────────────── COMPONENTS ───────────────────────── */
+
+import { AlbumRating } from "@/types/Album";
+import { UserProfile } from "@/types/User";
 import {
   Image,
   Pressable,
@@ -8,85 +10,44 @@ import {
   Text,
   View,
 } from "react-native";
+import { RatingInput } from "./RatingInput";
 
-import { RatingInput } from "@/components/RatingInput";
-import { useProfileStore } from "@/storage/store/profileStore";
-import { AlbumRating } from "@/types/Album";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-export default function Profile() {
-  const { reviews, listenLater } = useProfileStore();
-  const [avatar, setAvatar] = useState<string | null>(null);
-
-  async function pickImage() {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permission.granted) return;
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsEditing: true,
-      aspect: [1, 1],
-    });
-
-    if (!result.canceled) {
-      setAvatar(result.assets[0].uri);
-    }
-  }
-
+export function ProfilePic({
+  avatar,
+  user,
+  pickImage,
+}: {
+  avatar?: string | null;
+  user?: UserProfile | null;
+  pickImage: () => void;
+}) {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* HEADER */}
-        <View style={styles.header}>
-          <Pressable onPress={pickImage}>
-            {avatar ? (
-              <Image source={{ uri: avatar }} style={styles.avatar} />
-            ) : (
-              <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                <Text style={styles.avatarText}>+</Text>
-              </View>
-            )}
-          </Pressable>
-
-          <View>
-            <Text style={styles.name}>Fernanda</Text>
-            <Text style={styles.username}>@mandu</Text>
-          </View>
+    <Pressable onPress={pickImage}>
+      {avatar || user?.photoURL ? (
+        <Image
+          source={{ uri: avatar ?? user?.photoURL ?? undefined }}
+          style={styles.avatar}
+        />
+      ) : (
+        <View style={[styles.avatar, styles.avatarPlaceholder]}>
+          <Text style={styles.avatarText}>+</Text>
         </View>
-
-        {/* STATS */}
-        <View style={styles.stats}>
-          <Stat value={reviews.length} label="Reviews" />
-          <Stat value={listenLater.length} label="To listen" />
-        </View>
-
-        {reviews.length > 0 && (
-          <Section title="Reviews mais recentes">
-            {reviews[0] && <ReviewCard item={reviews[0]} />}
-            {reviews[1] && <ReviewCard item={reviews[1]} />}
-            {reviews[2] && <ReviewCard item={reviews[2]} />}
-          </Section>
-        )}
-
-        {/* REVIEWS */}
-        <Section title="Albuns avaliados">
-          <HorizontalList items={reviews} />
-        </Section>
-
-        {/* REVIEWED ALBUMS */}
-        <Section title="Ouvir mais tardes">
-          <HorizontalList items={reviews} />
-        </Section>
-      </ScrollView>
-    </SafeAreaView>
+      )}
+    </Pressable>
   );
 }
 
-/* ───────────────────────── COMPONENTS ───────────────────────── */
+export function HeaderName({ user = null }: { user?: UserProfile | null }) {
+  return (
+    <View>
+      <Text style={styles.name}>{user?.name ?? "Usuário"}</Text>
 
-function Stat({ value, label }: { value: number; label: string }) {
+      <Text style={styles.username}>{user?.email}</Text>
+    </View>
+  );
+}
+
+export function Stat({ value = 0, label }: { value?: number; label: string }) {
   return (
     <View style={styles.stat}>
       <Text style={styles.statValue}>{value}</Text>
@@ -95,7 +56,7 @@ function Stat({ value, label }: { value: number; label: string }) {
   );
 }
 
-function Section({
+export function Section({
   title,
   children,
 }: {
@@ -110,7 +71,7 @@ function Section({
   );
 }
 
-function HorizontalList({ items }: { items: AlbumRating[] }) {
+export function HorizontalList({ items }: { items: AlbumRating[] }) {
   if (items.length === 0) {
     return <Text style={styles.empty}>Nada por aqui ainda</Text>;
   }
@@ -124,7 +85,7 @@ function HorizontalList({ items }: { items: AlbumRating[] }) {
   );
 }
 
-function AlbumCard({ album }: { album: AlbumRating }) {
+export function AlbumCard({ album }: { album: AlbumRating }) {
   return (
     <View style={styles.card}>
       <Image
@@ -135,7 +96,7 @@ function AlbumCard({ album }: { album: AlbumRating }) {
   );
 }
 
-function ReviewCard({ item }: { item: AlbumRating }) {
+export function ReviewCard({ item }: { item: AlbumRating }) {
   return (
     <View
       style={{
@@ -173,12 +134,10 @@ function ReviewCard({ item }: { item: AlbumRating }) {
 
 /* ───────────────────────── STYLES ───────────────────────── */
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
   },
-
   /* Header */
   header: {
     flexDirection: "row",
