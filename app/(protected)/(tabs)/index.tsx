@@ -2,9 +2,10 @@ import { SearchBar } from "@/components/SearchBar";
 import { getTopAlbums } from "@/services/album/getTopAlbums";
 import { searchAlbums } from "@/services/album/searchAlbum";
 import { useQuery } from "@tanstack/react-query";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { FlatList, Image, Pressable, Text } from "react-native";
+import { FlatList, Pressable, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
@@ -44,8 +45,10 @@ export default function Home() {
             onPress={() => router.push(`/album/${item.id}`)}
           >
             <Image
-              source={{ uri: item.cover_medium }}
+              source={item.cover_medium}
               style={{ width: "100%", aspectRatio: 1, borderRadius: 8 }}
+              contentFit="cover"
+              cachePolicy="memory-disk"
             />
             <Text
               numberOfLines={1}
