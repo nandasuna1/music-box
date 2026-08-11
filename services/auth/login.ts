@@ -1,5 +1,4 @@
 import { auth } from "@/services/firebase";
-import { useProfileStore } from "@/storage/store/profileStore";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import { upsertUser } from "../user/upsert";
@@ -27,7 +26,6 @@ export async function login() {
 
     if (user) {
       await upsertUser(user);
-      await useProfileStore.getState().loadProfile(user.uid);
     }
   } catch (err) {
     console.log({ err });
