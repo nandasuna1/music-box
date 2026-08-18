@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "jest",
+    "test": "jest --forceExit",
     "test:watch": "jest --watchAll"
   },
   "dependencies": {

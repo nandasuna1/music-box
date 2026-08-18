@@ -45,3 +45,7 @@ jest.mock("@react-native-google-signin/google-signin", () => ({
     signOut: jest.fn(() => Promise.resolve()),
   },
 }));
+
+afterEach(() => {
+  jest.clearAllTimers();
+});
