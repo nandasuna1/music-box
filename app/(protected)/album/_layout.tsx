@@ -1,6 +1,6 @@
 // app/album/_layout.tsx
 import { Stack } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, Text } from "react-native";
 
 export default function AlbumLayout() {
   return (
@@ -11,7 +11,7 @@ export default function AlbumLayout() {
           title: "Album",
           headerRight: () => (
             <Pressable onPress={() => alert("This is a button!")}>
-              Info
+              <Text>Info</Text>
             </Pressable>
           ),
         }}

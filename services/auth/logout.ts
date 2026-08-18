@@ -1,5 +1,5 @@
 import { auth } from "@/services/firebase";
-import { useProfileStore } from "@/storage/store/profileStore";
+import { logger } from "@/utils/logger";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { signOut } from "firebase/auth";
 
@@ -10,9 +10,8 @@ export async function handleLogout() {
 
     // Google (opcional, mas recomendado)
     await GoogleSignin.signOut();
-    useProfileStore.getState().reset();
   } catch (err) {
-    console.log("Logout error:", err);
+    logger.error("Logout error", { err });
     throw err;
   }
 }

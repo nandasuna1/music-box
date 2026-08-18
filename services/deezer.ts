@@ -1,6 +1,6 @@
 // services/deezer.ts
-import axios from "axios";
+import { create } from "axios";
 
-export const deezerApi = axios.create({
+export const deezerApi = create({
   baseURL: "https://api.deezer.com",
 });

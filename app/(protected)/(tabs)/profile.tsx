@@ -26,20 +26,20 @@ export default function Profile() {
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["user-profile", user?.uid],
-    queryFn: () => getUserProfile(user?.uid),
+    queryFn: () => getUserProfile(user!.uid),
     enabled: !!user?.uid,
   });
 
   const { data: recentReviews, isLoading: isLoadingReviews } = useQuery({
     queryKey: ["user-recent-reviews", user?.uid],
-    queryFn: () => getUserRecentReviews(user?.uid, 3),
+    queryFn: () => getUserRecentReviews(user!.uid, 3),
     enabled: !!user?.uid,
   });
 
-  const {} = useQuery({
-    queryKey: ["user-recent-listen-later", user?.uid],
-    queryFn: () => 
-  })
+  // const {} = useQuery({
+  //   queryKey: ["user-recent-listen-later", user?.uid],
+  //   queryFn: () => ge
+  // })
 
   async function pickImage() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
