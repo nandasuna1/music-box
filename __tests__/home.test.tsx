@@ -18,27 +18,6 @@ jest.mock("expo-router", () => ({
   useRouter: jest.fn(),
 }));
 
-// Mock do SearchBar para testar a integração de forma desacoplada
-jest.mock("@/components/SearchBar", () => ({
-  SearchBar: ({
-    value,
-    onChange,
-  }: {
-    value: string;
-    onChange: (text: string) => void;
-  }) => {
-    const { TextInput } = require("react-native");
-    return (
-      <TextInput
-        placeholder="Buscar..."
-        value={value}
-        onChangeText={onChange}
-        testID="search-bar-input"
-      />
-    );
-  },
-}));
-
 // Mock de expo-image para evitar alertas no ambiente de testes do React Native
 jest.mock("expo-image", () => ({
   Image: "Image",

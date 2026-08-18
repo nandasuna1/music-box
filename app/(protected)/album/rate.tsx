@@ -3,6 +3,7 @@ import { RatingInput } from "@/components/RatingInput";
 import { useAuth } from "@/contexts/AuthContext";
 import { upsertReview } from "@/services/reviews/upsertReview";
 import { getUserAlbumReview } from "@/services/user/getUserAlbumReview";
+import { logger } from "@/utils/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -72,10 +73,14 @@ export default function RateAlbum() {
         queryKey: ["user-profile", user.uid],
       });
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to save review", { err });
     } finally {
       setLoading(false);
-      router.canGoBack() ? router.back() : router.replace(`/album/${albumId}`);
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace(`/album/${albumId}`);
+      }
     }
   }
 
