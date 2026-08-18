@@ -8,6 +8,7 @@ import { getIsFavoriteAlbum } from "@/services/album/getIsFavoriteAlbum";
 import { upsertSaveForLater } from "@/services/album/upsertSaveForLater";
 import { getUserAlbumReview } from "@/services/user/getUserAlbumReview";
 import { formatDuration } from "@/utils/dataFormatter";
+import { logger } from "@/utils/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
@@ -83,7 +84,7 @@ export default function AlbumDetail() {
         queryKey: ["user-profile", user?.uid],
       });
     } catch (e) {
-      console.error("Error: ", { e });
+      logger.error("Failed to update save-for-later state", { e });
       setSaveForLaterOptimistic(false);
     }
     // continuar com base no rate.tsx/handleSave
@@ -141,7 +142,7 @@ export default function AlbumDetail() {
               </View>
               {Boolean(review?.comment) && (
                 <Text style={{ color: "#fff", marginTop: 4, marginLeft: 8 }}>
-                  Voce achou: "{review?.comment}"
+                  Voce achou: &quot;{review?.comment}&quot;
                 </Text>
               )}
             </View>

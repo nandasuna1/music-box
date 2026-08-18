@@ -15,6 +15,7 @@ export function SearchBar({ value, onChange }: Props) {
         autoCorrect={false}
         autoCapitalize="none"
         style={styles.input}
+        testID="search-bar-input"
       />
     </View>
   );

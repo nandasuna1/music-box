@@ -1,5 +1,5 @@
+// jest.setup.ts
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
-import "@testing-library/jest-native";
 /**
  * AsyncStorage mock
  */
@@ -45,3 +45,7 @@ jest.mock("@react-native-google-signin/google-signin", () => ({
     signOut: jest.fn(() => Promise.resolve()),
   },
 }));
+
+afterEach(() => {
+  jest.clearAllTimers();
+});
