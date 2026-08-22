@@ -1,7 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
-
 import { Loading } from "@/components/Loading";
 import {
   HeaderName,
@@ -17,6 +13,9 @@ import { handleLogout } from "@/services/auth/logout";
 import { getUserRecentReviews } from "@/services/reviews/getUserRecentReviews";
 import { getUserProfile } from "@/services/user/getUserProfile";
 import { useQuery } from "@tanstack/react-query";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Profile() {
@@ -38,7 +37,7 @@ export default function Profile() {
 
   // const {} = useQuery({
   //   queryKey: ["user-recent-listen-later", user?.uid],
-  //   queryFn: () => ge
+  //   queryFn: () =>
   // })
 
   async function pickImage() {
@@ -119,6 +118,7 @@ export default function Profile() {
           style={{
             marginBottom: 0,
             marginTop: "auto",
+            gap: 4,
           }}
         >
           <Pressable

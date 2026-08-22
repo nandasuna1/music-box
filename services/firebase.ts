@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getReactNativePersistence, initializeAuth } from "firebase/auth";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getReactNativePersistence, initializeAuth, getAuth, Auth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { secureStoreAsyncStorage } from "@/storage/auth/secureStorePersistence";
 
@@ -13,9 +13,17 @@ const firebaseConfig = {
   measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+// Singleton: reuse app if already initialized (prevents multiple initialization)
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(secureStoreAsyncStorage),
-});
+// Singleton: use getAuth() if already initialized, otherwise initialize with persistence
+let auth: Auth;
+try {
+  auth = getAuth(app);
+} catch {
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(secureStoreAsyncStorage),
+  });
+}
+export { auth };

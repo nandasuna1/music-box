@@ -19,7 +19,7 @@ export async function getUserReviews(): Promise<AlbumRating[]> {
     const reviewDoc = await getDoc(reviewRef);
 
     if (reviewDoc.exists()) {
-      const currentReview = reviewDoc.data();
+      const currentReview = reviewDoc.data() as Omit<AlbumRating, "id">;
       return { id: reviewDoc.id, ...currentReview } as AlbumRating;
     }
 
