@@ -100,7 +100,18 @@ export default function RateAlbum() {
         style={styles.input}
       />
 
-      <Pressable onPress={handleSave} disabled={loading}>
+      <Pressable
+        onPress={handleSave}
+        disabled={loading}
+        style={{
+          padding: 16,
+          backgroundColor: "#FFD700",
+          borderRadius: 8,
+          alignItems: "center",
+          marginBottom: 0,
+          marginTop: "auto",
+        }}
+      >
         <Text>{loading ? "Salvando Avaliação" : "Salvar avaliação"}</Text>
       </Pressable>
     </View>

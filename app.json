@@ -8,6 +8,9 @@
     "scheme": "pricetag",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "updates": {
+      "url": "https://u.expo.dev/378f28e8-6de0-40bd-b2a3-057443343135"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.nandasunadev.musicbox"
@@ -49,7 +52,8 @@
           "iosUrlScheme": "com.googleusercontent.apps.com.googleusercontent.apps.843337715350-caso2ra8p9j2nvu7k80dmma3f1as0j8s"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-updates"
     ],
     "experiments": {
       "typedRoutes": true,

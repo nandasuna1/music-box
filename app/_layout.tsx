@@ -20,7 +20,7 @@ GoogleSignin.configure({
 
 // Initialize Sentry
 Sentry.init({
-  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? "YOUR_SENTRY_DSN",
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   enableNativeFramesTracking: !isRunningInExpoGo(),
   tracesSampleRate: 1.0,
 });
