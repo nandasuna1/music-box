@@ -11,8 +11,16 @@ export type DeezerAlbum = {
   };
 };
 
-export async function getTopAlbums(): Promise<DeezerAlbum[]> {
-  const response = await deezerApi.get("/chart/0/albums");
+export async function getTopAlbums(
+  limit: number = 20,
+  offset: number = 0,
+): Promise<DeezerAlbum[]> {
+  const response = await deezerApi.get("/chart/0/albums", {
+    params: {
+      limit,
+      index: offset,
+    },
+  });
 
   // Deezer retorna { data: Album[] }
   return response.data.data;
