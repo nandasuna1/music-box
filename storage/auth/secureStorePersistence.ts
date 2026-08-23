@@ -1,8 +1,8 @@
+import { logger } from "@/utils/logger";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
 import { ReactNativeAsyncStorage } from "firebase/auth";
-import { logger } from "@/utils/logger";
+import { Platform } from "react-native";
 
 /**
  * `expo-secure-store` limits values to 2048 bytes and only allows keys made of

@@ -11,7 +11,9 @@
  * tests), so no extra import is required.
  */
 
+
 declare const __DEV__: boolean;
+declare const __PROD__: boolean;
 
 const SENSITIVE_KEY_PATTERN =
   /token|password|secret|email|uid|apikey|api_key|authorization|cookie/i;
@@ -64,6 +66,12 @@ function isDev(): boolean {
   return typeof __DEV__ !== "undefined" && __DEV__;
 }
 
+function isProd(): boolean {
+  return typeof __PROD__ !== "undefined" && __PROD__;
+}
+
+import * as Monitoring from "@/utils/monitoring/sentry";
+
 export const logger = {
   log(message: string, ...meta: unknown[]): void {
     if (!isDev()) return;
@@ -82,6 +90,14 @@ export const logger = {
     console.warn(message, ...sanitizeArgs(meta));
   },
   error(message: string, ...meta: unknown[]): void {
+    if (isProd()) {
+      try {
+        const sentryMessage = "Error: " + message;
+        Monitoring.captureException(new Error(sentryMessage), { meta: sanitizeArgs(meta) });
+      } catch (e) {
+        // ignore monitoring failures in constrained environments
+      }
+    }
     if (!isDev()) return;
     console.error(message, ...sanitizeArgs(meta));
   },

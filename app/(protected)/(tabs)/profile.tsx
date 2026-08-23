@@ -121,6 +121,7 @@ export default function Profile() {
             marginBottom: 0,
             marginTop: "auto",
             gap: 4,
+            gap: 4,
           }}
         >
           <Pressable
