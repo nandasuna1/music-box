@@ -1,7 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
-
 import { Loading } from "@/components/Loading";
 import {
   HeaderName,
@@ -15,8 +11,12 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { handleLogout } from "@/services/auth/logout";
 import { getUserRecentReviews } from "@/services/reviews/getUserRecentReviews";
+import { getUserSaveForLater } from "@/services/saveForLater/getUserSaveForLater";
 import { getUserProfile } from "@/services/user/getUserProfile";
 import { useQuery } from "@tanstack/react-query";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Profile() {
@@ -36,10 +36,11 @@ export default function Profile() {
     enabled: !!user?.uid,
   });
 
-  // const {} = useQuery({
-  //   queryKey: ["user-recent-listen-later", user?.uid],
-  //   queryFn: () => ge
-  // })
+  const { data: saveForLater, isLoading: isLoadingSaveForLater } = useQuery({
+    queryKey: ["user-save-for-later", user?.uid],
+    queryFn: () => getUserSaveForLater(user!.uid, 3),
+    enabled: !!user?.uid,
+  });
 
   async function pickImage() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -112,13 +113,14 @@ export default function Profile() {
 
         {/* REVIEWED ALBUMS */}
         <Section title="Ouvir mais tardes">
-          <HorizontalList items={[]} />
+          <HorizontalList items={saveForLater ?? []} />
         </Section>
 
         <View
           style={{
             marginBottom: 0,
             marginTop: "auto",
+            gap: 4,
           }}
         >
           <Pressable
