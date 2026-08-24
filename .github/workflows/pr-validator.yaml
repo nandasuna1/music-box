@@ -23,6 +23,14 @@ jobs:
           node-version: 24
           cache: "npm"
 
+      # Step 3: install dependencies
+      - name: install dependencies
+        run: npm ci
+
+      # Step 4: verify code formatting
+      - name: Execute Eslint
+        run: npm run lint
+
       - name: Debug environment
         run: |
           echo "Node:"
@@ -37,14 +45,6 @@ jobs:
           git status --short
           echo "Dependencies:"
           npm ls @tanstack/react-query react react-native jest jest-expo @testing-library/react-native
-
-      # Step 3: install dependencies
-      - name: install dependencies
-        run: npm ci
-
-      # Step 4: verify code formatting
-      - name: Execute Eslint
-        run: npm run lint
 
       # Step 5: run unity tests
       - name: Run unit tests
