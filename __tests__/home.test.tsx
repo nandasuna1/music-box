@@ -163,4 +163,30 @@ describe("Home Screen", () => {
     // Verifica se a rota de navegação do expo-router foi disparada corretamente
     expect(mockPush).toHaveBeenCalledWith("/album/1");
   });
+
+  it("exibe o estado de carregamento e depois lista os álbuns mais populares", async () => {
+    mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
+
+    renderWithClient(<Home />);
+
+    expect(screen.getByText("Carregando...")).toBeTruthy();
+
+    await waitFor(() => {
+      expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
+    });
+
+    console.log(
+      "getTopAlbums calls:",
+      JSON.stringify(mockGetTopAlbums.mock.calls),
+    );
+
+    console.log(
+      "getTopAlbums results:",
+      JSON.stringify(mockGetTopAlbums.mock.results),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Abbey Road")).toBeTruthy();
+    });
+  });
 });
