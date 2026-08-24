@@ -14,9 +14,6 @@ export default function Home() {
   const router = useRouter();
 
   const [query, setQuery] = useState("");
-  // const [currentPage, setCurrentPage] = useState(0);
-  // const [allAlbums, setAllAlbums] = useState<any[]>([]);
-  // const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const isSearching = query.length > 0;
 
@@ -48,34 +45,8 @@ export default function Home() {
 
   const allAlbums = data?.pages.flat() ?? [];
 
-  // useEffect(() => {
-  //   console.log("HOME DATA:", data);
-  //   console.log("HOME CURRENT PAGE:", currentPage);
-
-  //   if (data) {
-  //     if (currentPage === 0) {
-  //       setAllAlbums(data);
-  //     } else {
-  //       setAllAlbums((prev) => [...prev, ...data]);
-  //     }
-  //     setIsLoadingMore(false);
-  //   }
-
-  //   console.log("HOME ALL ALBUMS:", allAlbums);
-  // }, [data, currentPage]);
-
-  // const handleLoadMore = async () => {
-  //   if (isSearching || isLoading || isLoadingMore || allAlbums.length === 0)
-  //     return;
-
-  //   setIsLoadingMore(true);
-  //   setCurrentPage((prev) => prev + 1);
-  // };
-
   const handleSearch = (newQuery: string) => {
     setQuery(newQuery);
-    // setCurrentPage(0);
-    // setAllAlbums([]);
   };
 
   if (isLoading) {
