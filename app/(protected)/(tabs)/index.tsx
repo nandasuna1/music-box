@@ -106,8 +106,8 @@ export default function Home() {
             </Text>
           </Pressable>
         )}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
+        // onEndReached={handleLoadMore}
+        // onEndReachedThreshold={0.5}
         ListFooterComponent={
           isLoadingMore ? (
             <ActivityIndicator

@@ -70,24 +70,24 @@ describe("Home Screen", () => {
     mockUseRouter.mockReturnValue({ push: mockPush } as any);
   });
 
-  // it("exibe o estado de carregamento e depois lista os álbuns mais populares", async () => {
-  //   mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
+  it("exibe o estado de carregamento e depois lista os álbuns mais populares", async () => {
+    mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
 
-  //   renderWithClient(<Home />);
+    renderWithClient(<Home />);
 
-  //   // Verifica se o estado de carregamento é exibido inicialmente
-  //   expect(screen.getByText("Carregando...")).toBeTruthy();
+    // Verifica se o estado de carregamento é exibido inicialmente
+    expect(screen.getByText("Carregando...")).toBeTruthy();
 
-  //   // Espera que a lista de álbuns seja renderizada
-  //   await waitFor(() => {
-  //     expect(screen.getByText("Abbey Road")).toBeTruthy();
-  //     expect(screen.getByText("The Beatles")).toBeTruthy();
-  //     expect(screen.getByText("Dark Side of the Moon")).toBeTruthy();
-  //     expect(screen.getByText("Pink Floyd")).toBeTruthy();
-  //   });
+    // Espera que a lista de álbuns seja renderizada
+    await waitFor(() => {
+      expect(screen.getByText("Abbey Road")).toBeTruthy();
+      expect(screen.getByText("The Beatles")).toBeTruthy();
+      expect(screen.getByText("Dark Side of the Moon")).toBeTruthy();
+      expect(screen.getByText("Pink Floyd")).toBeTruthy();
+    });
 
-  //   expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
-  // });
+    expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
+  });
 
   it("exibe mensagem de erro caso a busca de álbuns falhe", async () => {
     mockGetTopAlbums.mockRejectedValue(new Error("Erro de rede"));
@@ -164,29 +164,29 @@ describe("Home Screen", () => {
     expect(mockPush).toHaveBeenCalledWith("/album/1");
   });
 
-  it("exibe o estado de carregamento e depois lista os álbuns mais populares", async () => {
-    mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
+  // it("exibe o estado de carregamento e depois lista os álbuns mais populares", async () => {
+  //   mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
 
-    renderWithClient(<Home />);
+  //   renderWithClient(<Home />);
 
-    expect(screen.getByText("Carregando...")).toBeTruthy();
+  //   expect(screen.getByText("Carregando...")).toBeTruthy();
 
-    await waitFor(() => {
-      expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
-    });
+  //   await waitFor(() => {
+  //     expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
+  //   });
 
-    console.log(
-      "getTopAlbums calls:",
-      JSON.stringify(mockGetTopAlbums.mock.calls),
-    );
+  //   console.log(
+  //     "getTopAlbums calls:",
+  //     JSON.stringify(mockGetTopAlbums.mock.calls),
+  //   );
 
-    console.log(
-      "getTopAlbums results:",
-      JSON.stringify(mockGetTopAlbums.mock.results),
-    );
+  //   console.log(
+  //     "getTopAlbums results:",
+  //     JSON.stringify(mockGetTopAlbums.mock.results),
+  //   );
 
-    await waitFor(() => {
-      expect(screen.getByText("Abbey Road")).toBeTruthy();
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(screen.getByText("Abbey Road")).toBeTruthy();
+  //   });
+  // });
 });
