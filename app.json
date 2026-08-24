@@ -52,7 +52,14 @@
         }
       ],
       "expo-secure-store",
-      "expo-updates"
+      "expo-updates",
+      [
+        "@sentry/react-native",
+        {
+          "organization": "nandasuna",
+          "project": "music-box"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
