@@ -1,7 +1,7 @@
 import { SearchBar } from "@/components/SearchBar";
 import { getTopAlbums } from "@/services/album/getTopAlbums";
 import { searchAlbums } from "@/services/album/searchAlbum";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -19,7 +19,6 @@ export default function Home() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const isSearching = query.length > 0;
-  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["albums", query, currentPage],
@@ -42,11 +41,11 @@ export default function Home() {
   }, [data, currentPage]);
 
   const handleLoadMore = async () => {
-    if (isSearching || isLoading || isLoadingMore) return;
+    if (isSearching || isLoading || isLoadingMore || allAlbums.length === 0)
+      return;
 
     setIsLoadingMore(true);
-    const nextPage = currentPage + 1;
-    setCurrentPage(nextPage);
+    setCurrentPage((prev) => prev + 1);
   };
 
   const handleSearch = (newQuery: string) => {
