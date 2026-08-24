@@ -1,10 +1,10 @@
 import { SearchBar } from "@/components/SearchBar";
 import { getTopAlbums } from "@/services/album/getTopAlbums";
 import { searchAlbums } from "@/services/album/searchAlbum";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,52 +14,71 @@ export default function Home() {
   const router = useRouter();
 
   const [query, setQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(0);
-  const [allAlbums, setAllAlbums] = useState<any[]>([]);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  // const [currentPage, setCurrentPage] = useState(0);
+  // const [allAlbums, setAllAlbums] = useState<any[]>([]);
+  // const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const isSearching = query.length > 0;
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["albums", query, currentPage],
-    queryFn: () =>
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["albums", query],
+    queryFn: ({ pageParam }) =>
       isSearching
         ? searchAlbums(query)
-        : getTopAlbums(ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+        : getTopAlbums(ITEMS_PER_PAGE, pageParam * ITEMS_PER_PAGE),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      if (isSearching) return undefined;
+
+      if (lastPage.length < ITEMS_PER_PAGE) {
+        return undefined;
+      }
+
+      return allPages.length;
+    },
     enabled: !isSearching || query.length >= 2,
   });
 
-  useEffect(() => {
-    console.log("HOME DATA:", data);
-    console.log("HOME CURRENT PAGE:", currentPage);
+  const allAlbums = data?.pages.flat() ?? [];
 
-    if (data) {
-      if (currentPage === 0) {
-        setAllAlbums(data);
-      } else {
-        setAllAlbums((prev) => [...prev, ...data]);
-      }
-      setIsLoadingMore(false);
-    }
+  // useEffect(() => {
+  //   console.log("HOME DATA:", data);
+  //   console.log("HOME CURRENT PAGE:", currentPage);
 
-    console.log("HOME ALL ALBUMS:", allAlbums);
-  }, [data, currentPage]);
+  //   if (data) {
+  //     if (currentPage === 0) {
+  //       setAllAlbums(data);
+  //     } else {
+  //       setAllAlbums((prev) => [...prev, ...data]);
+  //     }
+  //     setIsLoadingMore(false);
+  //   }
 
-  const handleLoadMore = async () => {
-    if (isSearching || isLoading || isLoadingMore || allAlbums.length === 0)
-      return;
+  //   console.log("HOME ALL ALBUMS:", allAlbums);
+  // }, [data, currentPage]);
 
-    setIsLoadingMore(true);
-    setCurrentPage((prev) => prev + 1);
-  };
+  // const handleLoadMore = async () => {
+  //   if (isSearching || isLoading || isLoadingMore || allAlbums.length === 0)
+  //     return;
+
+  //   setIsLoadingMore(true);
+  //   setCurrentPage((prev) => prev + 1);
+  // };
 
   const handleSearch = (newQuery: string) => {
     setQuery(newQuery);
-    setCurrentPage(0);
-    setAllAlbums([]);
+    // setCurrentPage(0);
+    // setAllAlbums([]);
   };
 
-  if (isLoading && currentPage === 0) {
+  if (isLoading) {
     return (
       <SafeAreaView>
         <Text style={{ color: "#fff", textAlign: "center", marginTop: 20 }}>
@@ -100,21 +119,27 @@ export default function Home() {
               contentFit="cover"
               cachePolicy="memory-disk"
             />
+
             <Text
               numberOfLines={1}
               style={{ fontWeight: "600", color: "#fff" }}
             >
               {item.title}
             </Text>
+
             <Text numberOfLines={1} style={{ color: "#666" }}>
               {item.artist.name}
             </Text>
           </Pressable>
         )}
-        onEndReached={handleLoadMore}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage && !isSearching) {
+            fetchNextPage();
+          }
+        }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
-          isLoadingMore ? (
+          isFetchingNextPage ? (
             <ActivityIndicator
               size="large"
               color="#fff"
