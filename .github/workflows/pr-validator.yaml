@@ -25,8 +25,18 @@ jobs:
 
       - name: Debug environment
         run: |
+          echo "Node:"
           node --version
+          echo "npm:"
           npm --version
+          echo "OS:"
+          uname -a
+          echo "Working directory:"
+          pwd
+          echo "Git:"
+          git status --short
+          echo "Dependencies:"
+          npm ls @tanstack/react-query react react-native jest jest-expo @testing-library/react-native
 
       # Step 3: install dependencies
       - name: install dependencies
