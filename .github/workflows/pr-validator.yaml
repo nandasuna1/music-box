@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Debug environment
+        run: |
+          node --version
+          npm --version
+          npm ls expo react react-native jest jest-expo @testing-library/react-native @tanstack/react-query
+          git status
       # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,4 +39,4 @@ jobs:
 
       # Step 5: run unity tests
       - name: Run unit tests
-        run: npm test
+        run: npm test -- --runInBand
