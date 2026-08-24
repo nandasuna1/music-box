@@ -1,7 +1,13 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getReactNativePersistence, initializeAuth, getAuth, Auth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 import { secureStoreAsyncStorage } from "@/storage/auth/secureStorePersistence";
+import { logger } from "@/utils/logger";
+import { FirebaseApp, getApp, getApps, initializeApp } from "firebase/app";
+import {
+  Auth,
+  getAuth,
+  getReactNativePersistence,
+  initializeAuth,
+} from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -13,17 +19,58 @@ const firebaseConfig = {
   measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+// Validate required config
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+  throw new Error(
+    "Firebase config is incomplete. Check your .env file for EXPO_PUBLIC_FIREBASE_* variables.",
+  );
+}
+
 // Singleton: reuse app if already initialized (prevents multiple initialization)
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+let app: FirebaseApp;
+try {
+  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+} catch (error) {
+  logger.error("Failed to initialize Firebase app", { error });
+  throw error;
+}
+
 export const db = getFirestore(app);
 
 // Singleton: use getAuth() if already initialized, otherwise initialize with persistence
-let auth: Auth;
-try {
-  auth = getAuth(app);
-} catch {
-  auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(secureStoreAsyncStorage),
-  });
+function initializeFirebaseAuth(): Auth {
+  try {
+    // Try to get existing auth instance first
+    return getAuth(app);
+  } catch (_) {
+    // getAuth() throws if auth was never initialized - this is expected
+    try {
+      // First initialization - provide secureStoreAsyncStorage for persistent auth
+      return initializeAuth(app, {
+        persistence: getReactNativePersistence(secureStoreAsyncStorage),
+      });
+    } catch (error) {
+      // If persistence initialization fails, try without persistence as last resort
+      logger.error(
+        "Failed to initialize auth with persistence, falling back to memory",
+        {
+          error,
+        },
+      );
+      try {
+        return initializeAuth(app);
+      } catch (fallbackError) {
+        // Critical error - log to Sentry and re-throw
+        logger.error(
+          "Critical: Failed to initialize Firebase Auth even with fallback",
+          {
+            error: fallbackError,
+          },
+        );
+        throw new Error("Firebase Auth initialization failed completely");
+      }
+    }
+  }
 }
-export { auth };
+
+export const auth = initializeFirebaseAuth();

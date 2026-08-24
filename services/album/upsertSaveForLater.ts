@@ -7,11 +7,11 @@ import {
 } from "firebase/firestore";
 import { DeezerAlbumDetail } from "./getAlbumById";
 
-export async function upsertSaveForLater(albumn: DeezerAlbumDetail) {
+export async function upsertSaveForLater(album: DeezerAlbumDetail) {
   const user = auth.currentUser;
   if (!user) throw new Error("Not authenticated");
 
-  const saveForLaterId = `${user.uid}_${albumn.id}`;
+  const saveForLaterId = `${user.uid}_${album.id}`;
 
   const userRef = doc(db, "users", user.uid);
   const saveForLaterRef = doc(db, "saveForLater", saveForLaterId);
@@ -32,10 +32,11 @@ export async function upsertSaveForLater(albumn: DeezerAlbumDetail) {
       saveForLaterRef,
       {
         userId: user.uid,
-        albumId: albumn.id,
+        albumId: album.id,
         album: {
-          title: albumn.title,
-          cover: albumn.cover_big,
+          title: album.title,
+          cover: album.cover_big,
+          artist: album.artist.name,
         },
         savedAt: serverTimestamp(),
       },
@@ -47,7 +48,7 @@ export async function upsertSaveForLater(albumn: DeezerAlbumDetail) {
       userSaveForLaterRef,
       {
         saveForLaterId,
-        albumId: albumn.id,
+        albumId: album.id,
         savedAt: serverTimestamp(),
       },
       { merge: true },
@@ -62,7 +63,7 @@ export async function upsertSaveForLater(albumn: DeezerAlbumDetail) {
   });
 
   return {
-    albumnId: albumn.id,
+    albumId: album.id,
     id: saveForLaterId,
   };
 }

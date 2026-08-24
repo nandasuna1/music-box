@@ -73,6 +73,10 @@ function isProd(): boolean {
 import * as Monitoring from "@/utils/monitoring/sentry";
 
 export const logger = {
+  log(message: string, ...meta: unknown[]): void {
+    if (!isDev()) return;
+    console.log(message, ...sanitizeArgs(meta));
+  },
   debug(message: string, ...meta: unknown[]): void {
     if (!isDev()) return;
     console.debug(message, ...sanitizeArgs(meta));

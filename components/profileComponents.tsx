@@ -1,6 +1,6 @@
 /* ───────────────────────── COMPONENTS ───────────────────────── */
 
-import { AlbumRating } from "@/types/Album";
+import { Album, AlbumRating } from "@/types/Album";
 import { UserProfile } from "@/types/User";
 import {
   Image,
@@ -71,7 +71,7 @@ export function Section({
   );
 }
 
-export function HorizontalList({ items }: { items: AlbumRating[] }) {
+export function HorizontalList({ items }: { items: Album[] }) {
   if (items.length === 0) {
     return <Text style={styles.empty}>Nada por aqui ainda</Text>;
   }
@@ -85,7 +85,7 @@ export function HorizontalList({ items }: { items: AlbumRating[] }) {
   );
 }
 
-export function AlbumCard({ album }: { album: AlbumRating }) {
+export function AlbumCard({ album }: { album: Album }) {
   return (
     <View style={styles.card}>
       <Image

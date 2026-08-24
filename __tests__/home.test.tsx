@@ -78,6 +78,10 @@ describe("Home Screen", () => {
     // Verifica se o estado de carregamento é exibido inicialmente
     expect(screen.getByText("Carregando...")).toBeTruthy();
 
+    await waitFor(() => {
+      expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
+    });
+
     // Espera que a lista de álbuns seja renderizada
     await waitFor(() => {
       expect(screen.getByText("Abbey Road")).toBeTruthy();

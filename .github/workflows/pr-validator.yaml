@@ -6,7 +6,6 @@ on:
     paths-ignore:
       - "docs/**"
 
-
 jobs:
   validate-project:
     name: Install, analyze and test
@@ -21,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
 
       # Step 3: install dependencies
@@ -34,4 +33,4 @@ jobs:
 
       # Step 5: run unity tests
       - name: Run unit tests
-        run: npm test
+        run: npm test -- --runInBand

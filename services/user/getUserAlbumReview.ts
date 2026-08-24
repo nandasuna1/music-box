@@ -1,7 +1,14 @@
 // services/reviews/getUserReviewByAlbum.ts
 import { auth, db } from "@/services/firebase";
 import { AlbumRating } from "@/types/Album";
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 export async function getUserAlbumReview(
   albumId: number,
@@ -13,6 +20,7 @@ export async function getUserAlbumReview(
     collection(db, "reviews"),
     where("userId", "==", user.uid),
     where("albumId", "==", albumId),
+    orderBy("ratedAt", "desc"),
     limit(1),
   );
 

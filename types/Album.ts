@@ -12,3 +12,18 @@ export type AlbumRating = {
   comment?: string;
   ratedAt: string;
 };
+
+export type SaveForLaterAlbum = {
+  albumId: number;
+  title: string;
+  artist: string;
+  cover: string;
+  savedAt: string;
+};
+
+export type Album = {
+  albumId: number;
+  title: string;
+  artist: string;
+  cover: string;
+};
