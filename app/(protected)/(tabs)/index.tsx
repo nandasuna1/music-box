@@ -30,6 +30,9 @@ export default function Home() {
   });
 
   useEffect(() => {
+    console.log("HOME DATA:", data);
+    console.log("HOME CURRENT PAGE:", currentPage);
+
     if (data) {
       if (currentPage === 0) {
         setAllAlbums(data);
@@ -38,6 +41,8 @@ export default function Home() {
       }
       setIsLoadingMore(false);
     }
+
+    console.log("HOME ALL ALBUMS:", allAlbums);
   }, [data, currentPage]);
 
   const handleLoadMore = async () => {
@@ -106,8 +111,8 @@ export default function Home() {
             </Text>
           </Pressable>
         )}
-        // onEndReached={handleLoadMore}
-        // onEndReachedThreshold={0.5}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={
           isLoadingMore ? (
             <ActivityIndicator

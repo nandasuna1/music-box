@@ -71,12 +71,27 @@ describe("Home Screen", () => {
   });
 
   it("exibe o estado de carregamento e depois lista os álbuns mais populares", async () => {
-    mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
+    // mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
+    mockGetTopAlbums.mockImplementation(async (...args) => {
+      console.log("getTopAlbums MOCK CALLED WITH:", args);
+      console.log("getTopAlbums MOCK RETURNING:", mockAlbumsList);
+
+      return mockAlbumsList as any;
+    });
 
     renderWithClient(<Home />);
 
     // Verifica se o estado de carregamento é exibido inicialmente
     expect(screen.getByText("Carregando...")).toBeTruthy();
+
+    await waitFor(() => {
+      expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
+    });
+
+    console.log(
+      "mock return value:",
+      await mockGetTopAlbums.mock.results[0].value,
+    );
 
     // Espera que a lista de álbuns seja renderizada
     await waitFor(() => {
@@ -164,29 +179,39 @@ describe("Home Screen", () => {
     expect(mockPush).toHaveBeenCalledWith("/album/1");
   });
 
-  // it("exibe o estado de carregamento e depois lista os álbuns mais populares", async () => {
-  //   mockGetTopAlbums.mockResolvedValue(mockAlbumsList as any);
+  it("teste", async () => {
+    mockGetTopAlbums.mockImplementation(async (...args) => {
+      console.log("getTopAlbums MOCK CALLED WITH:", args);
+      console.log("getTopAlbums MOCK RETURNING:", mockAlbumsList);
 
-  //   renderWithClient(<Home />);
+      return mockAlbumsList as any;
+    });
 
-  //   expect(screen.getByText("Carregando...")).toBeTruthy();
+    renderWithClient(<Home />);
 
-  //   await waitFor(() => {
-  //     expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
-  //   });
+    expect(screen.getByText("Carregando...")).toBeTruthy();
 
-  //   console.log(
-  //     "getTopAlbums calls:",
-  //     JSON.stringify(mockGetTopAlbums.mock.calls),
-  //   );
+    await waitFor(() => {
+      expect(mockGetTopAlbums).toHaveBeenCalledTimes(1);
+    });
 
-  //   console.log(
-  //     "getTopAlbums results:",
-  //     JSON.stringify(mockGetTopAlbums.mock.results),
-  //   );
+    console.log(
+      "mock return value:",
+      await mockGetTopAlbums.mock.results[0].value,
+    );
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText("Abbey Road")).toBeTruthy();
-  //   });
-  // });
+    console.log(
+      "getTopAlbums calls:",
+      JSON.stringify(mockGetTopAlbums.mock.calls),
+    );
+
+    console.log(
+      "getTopAlbums results:",
+      JSON.stringify(mockGetTopAlbums.mock.results),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Abbey Road")).toBeTruthy();
+    });
+  });
 });
