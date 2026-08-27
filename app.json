@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nandasuna.musicbox"
+      "bundleIdentifier": "com.nandasuna.vinyl"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.nandasuna.musicbox"
+      "package": "com.nandasuna.vinyl"
     },
     "web": {
       "output": "static",
