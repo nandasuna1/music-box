@@ -30,7 +30,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "@sentry/react-native/expo",
       "expo-router",
       [
         "expo-splash-screen",
@@ -52,7 +51,14 @@
         }
       ],
       "expo-secure-store",
-      "expo-updates"
+      "expo-updates",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "nandasuna",
+          "project": "music-box"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
