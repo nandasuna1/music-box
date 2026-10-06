@@ -9,6 +9,7 @@ export async function login() {
     await GoogleSignin.hasPlayServices();
   } catch (err) {
     logger.error("Google services are unavailable", { err });
+    throw new Error("Google services are unavailable");
   }
 
   try {
@@ -30,5 +31,6 @@ export async function login() {
     }
   } catch (err) {
     logger.error("Google sign-in failed", { err });
+    throw new Error("Google sign-in failed");
   }
 }

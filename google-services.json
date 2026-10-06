@@ -1,0 +1,79 @@
+{
+  "project_info": {
+    "project_number": "843337715350",
+    "project_id": "music-box-a8b6a",
+    "storage_bucket": "music-box-a8b6a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:843337715350:android:f7e80706bf3cab5d1f7cb7",
+        "android_client_info": {
+          "package_name": "com.nandasuna.vinyl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "843337715350-4k9h2llttk1dduomgjqg2tuqqbbddrbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nandasuna.vinyl",
+            "certificate_hash": "0829e4c55ff8139c270ec93c64fcb0097dceb9f4"
+          }
+        },
+        {
+          "client_id": "843337715350-a9l515bc9rcjvt6jq472uee9dtqcitlj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nandasuna.vinyl",
+            "certificate_hash": "0c7ae44027f7278fb21da6ff24376d2ef78650a9"
+          }
+        },
+        {
+          "client_id": "843337715350-dq8aordu02h8d4bfudfd3fl54jnkbatg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nandasuna.vinyl",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "843337715350-hhnrd6pqu2r34u8nmggsptfuo14cmsrp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nandasuna.vinyl",
+            "certificate_hash": "00179b176a8a263280b8e1ce89f46d4d46860312"
+          }
+        },
+        {
+          "client_id": "843337715350-ks4gfoo6olpq14jcgohgr5b8o4depir8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nandasuna.vinyl",
+            "certificate_hash": "1da0e170fee880262ef872c26ddd7d29a73a4ca8"
+          }
+        },
+        {
+          "client_id": "843337715350-h7mmf3aac6b7uaakfg2qj620pi4dk7u7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBFB12-uvTvtsVh5UuNIAgtBFmFW5UR1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "843337715350-h7mmf3aac6b7uaakfg2qj620pi4dk7u7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

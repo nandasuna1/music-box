@@ -1,7 +1,20 @@
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
+import { login } from "@/services/auth/login";
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Login() {
+  const [error, setError] = useState<string | null>(null);
+  async function handleLogin() {
+    setError(null);
+    try {
+      await login();
+    } catch (err) {
+      console.error(err);
+      setError("Falha ao entrar com o Google");
+    }
+  }
+
   return (
     <View style={styles.container}>
       {/* Logo / Nome */}
@@ -16,13 +29,14 @@ export default function Login() {
 
       {/* CTA */}
       <View style={styles.buttonWrapper}>
-        <GoogleLoginButton />
+        <GoogleLoginButton login={handleLogin} />
       </View>
 
       {/* Footer */}
       <Text style={styles.footer}>
         Ao continuar, você concorda com nossos termos.
       </Text>
+      {error && <Text style={{ color: "red", marginTop: 8 }}>{error}</Text>}
     </View>
   );
 }

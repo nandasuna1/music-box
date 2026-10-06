@@ -1,7 +1,6 @@
-import { login } from "@/services/auth/login";
 import { Pressable, Text } from "react-native";
 
-export function GoogleLoginButton() {
+export function GoogleLoginButton({ login }: { login: () => Promise<void> }) {
   return (
     <Pressable
       onPress={login}

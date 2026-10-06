@@ -23,7 +23,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.nandasuna.vinyl"
+      "package": "com.nandasuna.vinyl",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
