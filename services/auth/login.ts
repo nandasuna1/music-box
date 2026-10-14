@@ -1,3 +1,4 @@
+import { refreshFirebaseAccessToken } from "@/lib/supabase";
 import { auth } from "@/services/firebase";
 import { logger } from "@/utils/logger";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -28,6 +29,7 @@ export async function login() {
 
     if (user) {
       await upsertUser(user);
+      await refreshFirebaseAccessToken();
     }
   } catch (err) {
     logger.error("Google sign-in failed", { err });

@@ -11,7 +11,6 @@
  * tests), so no extra import is required.
  */
 
-
 declare const __DEV__: boolean;
 declare const __PROD__: boolean;
 
@@ -70,7 +69,6 @@ function isProd(): boolean {
   return typeof __PROD__ !== "undefined" && __PROD__;
 }
 
-import * as Monitoring from "@/utils/monitoring/sentry";
 
 export const logger = {
   log(message: string, ...meta: unknown[]): void {
@@ -90,14 +88,14 @@ export const logger = {
     console.warn(message, ...sanitizeArgs(meta));
   },
   error(message: string, ...meta: unknown[]): void {
-    if (isProd()) {
-      try {
-        const sentryMessage = "Error: " + message;
-        Monitoring.captureException(new Error(sentryMessage), { meta: sanitizeArgs(meta) });
-      } catch (e) {
-        // ignore monitoring failures in constrained environments
-      }
-    }
+    // if (isProd()) {
+    //   try {
+    //     const sentryMessage = "Error: " + message;
+    //     Monitoring.captureException(new Error(sentryMessage), { meta: sanitizeArgs(meta) });
+    //   } catch (e) {
+    //     // ignore monitoring failures in constrained environments
+    //   }
+    // }
     if (!isDev()) return;
     console.error(message, ...sanitizeArgs(meta));
   },
