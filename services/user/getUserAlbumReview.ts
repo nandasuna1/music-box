@@ -1,14 +1,7 @@
 // services/reviews/getUserReviewByAlbum.ts
 import { auth, db } from "@/services/firebase";
 import { AlbumRating } from "@/types/Album";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 export async function getUserAlbumReview(
   albumId: number,
@@ -16,19 +9,12 @@ export async function getUserAlbumReview(
   const user = auth.currentUser;
   if (!user) return null;
 
-  const q = query(
-    collection(db, "reviews"),
-    where("userId", "==", user.uid),
-    where("albumId", "==", albumId),
-    orderBy("ratedAt", "desc"),
-    limit(1),
-  );
+  const reviewRef = doc(db, "reviews", `${user.uid}_${albumId}`);
+  const snap = await getDoc(reviewRef);
 
-  const snap = await getDocs(q);
+  if (!snap.exists()) return null;
 
-  if (snap.empty) return null;
-
-  const data = snap.docs[0].data();
+  const data = snap.data();
 
   return {
     albumId: data.albumId,
