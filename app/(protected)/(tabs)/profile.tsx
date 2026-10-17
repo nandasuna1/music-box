@@ -14,7 +14,6 @@ import { getUserRecentReviews } from "@/services/reviews/getUserRecentReviews";
 import { getUserSaveForLater } from "@/services/saveForLater/getUserSaveForLater";
 import { getUserProfile } from "@/services/user/getUserProfile";
 import { useQuery } from "@tanstack/react-query";
-import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,28 +35,16 @@ export default function Profile() {
     enabled: !!user?.uid,
   });
 
-  const { data: saveForLater, isLoading: isLoadingSaveForLater } = useQuery({
-    queryKey: ["user-save-for-later", user?.uid],
+  const {
+    data: saveForLater,
+    isLoading: isLoadingSaveForLater,
+    isError: isSaveForLaterError,
+    refetch: refetchSaveForLater,
+  } = useQuery({
+    queryKey: ["save-for-later", user?.uid],
     queryFn: () => getUserSaveForLater(user!.uid, 3),
     enabled: !!user?.uid,
   });
-
-  async function pickImage() {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permission.granted) return;
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsEditing: true,
-      aspect: [1, 1],
-    });
-
-    if (!result.canceled) {
-      setAvatar(result.assets[0].uri);
-    }
-  }
 
   async function onLogout() {
     Alert.alert("Sair da conta", "Tem certeza que deseja sair?", [
@@ -88,7 +75,7 @@ export default function Profile() {
       >
         {/* HEADER */}
         <View style={styles.header}>
-          <ProfilePic avatar={avatar} pickImage={pickImage} user={profile} />
+          <ProfilePic avatar={avatar} user={profile} />
           <HeaderName user={profile} />
         </View>
 
@@ -113,7 +100,15 @@ export default function Profile() {
 
         {/* REVIEWED ALBUMS */}
         <Section title="Ouvir mais tardes">
-          <HorizontalList items={saveForLater ?? []} />
+          {isLoadingSaveForLater ? (
+            <Text style={styles.empty}>Carregando...</Text>
+          ) : isSaveForLaterError ? (
+            <Text style={styles.empty}>
+              Não foi possível carregar os álbuns salvos.
+            </Text>
+          ) : (
+            <HorizontalList items={saveForLater ?? []} />
+          )}
         </Section>
 
         <View
