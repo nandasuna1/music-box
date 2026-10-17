@@ -22,7 +22,7 @@ export function ProfilePic({
   pickImage: () => void;
 }) {
   return (
-    <Pressable onPress={pickImage}>
+    <Pressable onPress={() => {}}>
       {avatar || user?.photoURL ? (
         <Image
           source={{ uri: avatar ?? user?.photoURL ?? undefined }}
