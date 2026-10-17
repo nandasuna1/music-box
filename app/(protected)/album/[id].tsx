@@ -5,7 +5,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAlbumById } from "@/services/album/getAlbumById";
 import { getIsFavoriteAlbum } from "@/services/album/getIsFavoriteAlbum";
-import { upsertSaveForLater } from "@/services/album/upsertSaveForLater";
+import { toggleSaveForLater } from "@/services/album/toggleSaveForLater";
 import { getUserAlbumReview } from "@/services/user/getUserAlbumReview";
 import { formatDuration } from "@/utils/dataFormatter";
 import { logger } from "@/utils/logger";
@@ -13,18 +13,18 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    FlatList,
-    Image,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 export default function AlbumDetail() {
   const router = useRouter();
   const { user } = useAuth();
-  const [saveForLaterOptimistic, setSaveForLaterOptimistic] = useState(false);
+  const [isSavingForLater, setIsSavingForLater] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -43,9 +43,9 @@ export default function AlbumDetail() {
   });
 
   const { data: isSavedForLater } = useQuery({
-    queryKey: ["album-favorite", id],
+    queryKey: ["album-favorite", user?.uid, Number(id)],
     queryFn: () => getIsFavoriteAlbum(Number(id)),
-    enabled: !!id,
+    enabled: !!user?.uid && !!id,
   });
 
   if (isLoading) {
@@ -69,25 +69,27 @@ export default function AlbumDetail() {
   };
 
   const saveForLater = async () => {
-    if (!user) return;
+    if (!user || isSavingForLater) return;
 
+    setIsSavingForLater(true);
     try {
-      setSaveForLaterOptimistic(true);
-      const savedForLater = await upsertSaveForLater(data);
-
+      const result = await toggleSaveForLater(data);
       queryClient.setQueryData(
-        ["save-for-later", user?.uid, Number(id)],
-        savedForLater,
+        ["album-favorite", user.uid, Number(id)],
+        result.isSaved,
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["user-profile", user?.uid],
+        queryKey: ["save-for-later", user.uid],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", user.uid],
       });
     } catch (e) {
       logger.error("Failed to update save-for-later state", { e });
-      setSaveForLaterOptimistic(false);
+    } finally {
+      setIsSavingForLater(false);
     }
-    // continuar com base no rate.tsx/handleSave
   };
 
   return (
@@ -128,15 +130,11 @@ export default function AlbumDetail() {
                 }}
               >
                 <RatingInput value={review?.rating} onChange={rateAlbum} />
-                <Pressable onPress={saveForLater}>
+                <Pressable onPress={saveForLater} disabled={isSavingForLater}>
                   <IconSymbol
                     size={28}
                     name="bookmark.fill"
-                    color={
-                      isSavedForLater || saveForLaterOptimistic
-                        ? "#f3d61d"
-                        : "#8a8a8a"
-                    }
+                    color={isSavedForLater ? "#f3d61d" : "#8a8a8a"}
                   />
                 </Pressable>
               </View>
