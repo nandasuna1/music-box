@@ -3,7 +3,7 @@ import React from "react";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Colors } from "@/constants/theme";
+import { Colors, DesignTokens } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/styling/use-color-scheme";
 
 export default function TabLayout() {
@@ -22,7 +22,11 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <IconSymbol
+              size={DesignTokens.sizing.icon}
+              name="house.fill"
+              color={color}
+            />
           ),
         }}
       />
@@ -31,7 +35,11 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="music.house" color={color} />
+            <IconSymbol
+              size={DesignTokens.sizing.icon}
+              name="music.house"
+              color={color}
+            />
           ),
         }}
       />

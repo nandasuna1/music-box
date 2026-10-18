@@ -1,5 +1,8 @@
 // app/album/rate.tsx
 import { RatingInput } from "@/components/RatingInput";
+import { Button } from "@/components/Button";
+import { TextField } from "@/components/TextField";
+import { DesignTokens } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { upsertReview } from "@/services/reviews/upsertReview";
 import { getUserAlbumReview } from "@/services/user/getUserAlbumReview";
@@ -7,7 +10,7 @@ import { logger } from "@/utils/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function RateAlbum() {
   const router = useRouter();
@@ -91,55 +94,47 @@ export default function RateAlbum() {
 
       <RatingInput value={rating} onChange={setRating} />
 
-      <TextInput
+      <TextField
         placeholder="Comentário (opcional)"
-        placeholderTextColor="#666"
         value={comment}
         onChangeText={setComment}
         multiline
         style={styles.input}
       />
 
-      <Pressable
+      <Button
         onPress={handleSave}
-        disabled={loading}
-        style={{
-          padding: 16,
-          backgroundColor: "#FFD700",
-          borderRadius: 8,
-          alignItems: "center",
-          marginBottom: 0,
-          marginTop: "auto",
-        }}
+        loading={loading}
+        loadingText="Salvando Avaliação"
+        style={styles.submit}
       >
-        <Text>{loading ? "Salvando Avaliação" : "Salvar avaliação"}</Text>
-      </Pressable>
+        Salvar avaliação
+      </Button>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
+    padding: DesignTokens.spacing.xl,
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: DesignTokens.colors.background,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: DesignTokens.typography.subtitle,
+    fontWeight: DesignTokens.fontWeight.bold,
+    color: DesignTokens.colors.text,
   },
   artist: {
-    color: "#888",
-    marginBottom: 16,
+    color: DesignTokens.colors.textMuted,
+    marginBottom: DesignTokens.spacing.lg,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#333",
-    borderRadius: 8,
-    padding: 8,
-    marginVertical: 12,
-    minHeight: 80,
-    color: "#fff",
+    minHeight: DesignTokens.sizing.commentFieldMinHeight,
+    marginVertical: DesignTokens.spacing.md,
+    textAlignVertical: "top",
+  },
+  submit: {
+    marginTop: "auto",
   },
 });

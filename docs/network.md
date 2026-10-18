@@ -28,17 +28,17 @@ Deezer numeric album ID is used as the album identifier in Firestore records.
 Firebase app, Auth, and Firestore initialization is centralized in
 `services/firebase.ts`. The service modules wrap SDK reads and writes:
 
-| Function                                | Operation                                                                                         |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `getUserProfile(userId)`                | Reads `users/{userId}` and maps profile fields.                                                   |
-| `getUserAlbumReview(albumId)`           | Finds the signed-in user's review for an album; returns `null` if signed out or no review exists. |
-| `getUserReviews()`                      | Reads the signed-in user's review references, then loads their top-level review documents.        |
-| `getUserRecentReviews(userId, max = 3)` | Reads up to `max` documents from `reviews` for the specified user.                                |
-| `getUserSaveForLater(userId, max = 3)`  | Reads up to `max` documents from `saveForLater` for the specified user.                           |
-| `upsertReview(review)`                  | Creates/updates a review and its per-user reference in a transaction.                             |
-| `upsertSaveForLater(album)`             | Creates/updates a saved album and its per-user reference in a transaction.                        |
-| `getIsFavoriteAlbum(albumId)`           | Checks for a matching `saveForLater` record for the signed-in user.                               |
-| `upsertUser(user)`                      | Creates `users/{uid}` on first Google sign-in; existing profiles are not changed.                 |
+| Function                                | Operation                                                                                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `getUserProfile(userId)`                | Reads `users/{userId}` and maps profile fields.                                                                |
+| `getUserAlbumReview(albumId)`           | Finds the signed-in user's review for an album; returns `null` if signed out or no review exists.              |
+| `getUserReviews()`                      | Reads the signed-in user's review references, then loads their top-level review documents.                     |
+| `getUserRecentReviews(userId, max = 3)` | Reads up to `max` documents from `reviews` for the specified user.                                             |
+| `getUserSaveForLater(userId, max = 3)`  | Reads the user's saved-album documents, sorts them by `savedAt` descending in memory, and returns up to `max`. |
+| `upsertReview(review)`                  | Creates/updates a review and its per-user reference in a transaction.                                          |
+| `upsertSaveForLater(album)`             | Creates/updates a saved album and its per-user reference in a transaction.                                     |
+| `getIsFavoriteAlbum(albumId)`           | Checks for a matching `saveForLater` record for the signed-in user.                                            |
+| `upsertUser(user)`                      | Creates `users/{uid}` on first Google sign-in; existing profiles are not changed.                              |
 
 ### Firestore document model
 
@@ -62,11 +62,15 @@ and an optional comment.
   not paginated by the current screen.
 - `getUserAlbumReview` filters by user and album, orders by `ratedAt`
   descending, and limits the result to one.
-- `getUserRecentReviews` and `getUserSaveForLater` filter by user and apply a
-  limit, but do not order by their timestamps. Results are therefore not
-  guaranteed to be the newest records.
-- Compound Firestore queries may require indexes. Create indexes requested by
-  Firebase for the queries in `services/`.
+- `getUserRecentReviews` filters by user and applies a limit, but does not
+  order by its timestamp. Results are therefore not guaranteed to be the
+  newest records.
+- `getUserSaveForLater` filters by user, sorts the returned documents by
+  `savedAt` descending in memory, and then applies its limit. This avoids
+  requiring a compound Firestore index for the user filter plus timestamp
+  ordering, at the cost of reading all saved-album documents for that user.
+- Other compound Firestore queries may require indexes. Create indexes
+  requested by Firebase for the queries in `services/`.
 - The repository does not include Firestore Security Rules or index
   definitions. Firebase project setup and authorization rules are external;
   see [Security and configuration](security.md).

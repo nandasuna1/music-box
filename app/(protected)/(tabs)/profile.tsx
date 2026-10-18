@@ -1,4 +1,6 @@
 import { Loading } from "@/components/Loading";
+import { Button } from "@/components/Button";
+import { DesignTokens } from "@/constants/theme";
 import {
   HeaderName,
   HorizontalList,
@@ -6,7 +8,7 @@ import {
   ReviewCard,
   Section,
   Stat,
-  styles,
+  styles as profileStyles,
 } from "@/components/profileComponents";
 import { useAuth } from "@/contexts/AuthContext";
 import { handleLogout } from "@/services/auth/logout";
@@ -15,7 +17,7 @@ import { getUserSaveForLater } from "@/services/saveForLater/getUserSaveForLater
 import { getUserProfile } from "@/services/user/getUserProfile";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Profile() {
@@ -38,6 +40,7 @@ export default function Profile() {
   const {
     data: saveForLater,
     isLoading: isLoadingSaveForLater,
+    isFetching: isFetchingSaveForLater,
     isError: isSaveForLaterError,
     refetch: refetchSaveForLater,
   } = useQuery({
@@ -66,7 +69,10 @@ export default function Profile() {
   return (
     <>
       <ScrollView
-        style={[styles.container, { paddingTop: insets.top + 10 }]}
+        style={[
+          profileStyles.container,
+          { paddingTop: insets.top + DesignTokens.spacing.sm },
+        ]}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           flexGrow: 1,
@@ -74,13 +80,13 @@ export default function Profile() {
         }}
       >
         {/* HEADER */}
-        <View style={styles.header}>
+        <View style={profileStyles.header}>
           <ProfilePic avatar={avatar} user={profile} />
           <HeaderName user={profile} />
         </View>
 
         {/* STATS */}
-        <View style={styles.stats}>
+        <View style={profileStyles.stats}>
           <Stat value={profile?.reviewsCount} label="Reviews" />
           <Stat
             value={profile?.listenLaterCount ? profile?.listenLaterCount : 0}
@@ -90,7 +96,7 @@ export default function Profile() {
 
         <Section title="Reviews mais recentes">
           {recentReviews?.length === 0 && (
-            <Text style={styles.empty}>Nenhuma review ainda</Text>
+            <Text style={profileStyles.empty}>Nenhuma review ainda</Text>
           )}
 
           {recentReviews?.map((review) => (
@@ -101,38 +107,44 @@ export default function Profile() {
         {/* REVIEWED ALBUMS */}
         <Section title="Ouvir mais tardes">
           {isLoadingSaveForLater ? (
-            <Text style={styles.empty}>Carregando...</Text>
+            <Text style={profileStyles.empty}>Carregando...</Text>
           ) : isSaveForLaterError ? (
-            <Text style={styles.empty}>
-              Não foi possível carregar os álbuns salvos.
-            </Text>
+            <View style={styles.saveForLaterError}>
+              <Text style={profileStyles.empty}>
+                Não foi possível carregar os álbuns salvos.
+              </Text>
+              <Button
+                variant="secondary"
+                loading={isFetchingSaveForLater}
+                loadingText="Tentando novamente"
+                onPress={async () => {
+                  await refetchSaveForLater();
+                }}
+              >
+                Tentar novamente
+              </Button>
+            </View>
           ) : (
             <HorizontalList items={saveForLater ?? []} />
           )}
         </Section>
 
-        <View
-          style={{
-            marginBottom: 0,
-            marginTop: "auto",
-            gap: 4,
-          }}
-        >
-          <Pressable
-            onPress={onLogout}
-            style={{
-              padding: 16,
-              backgroundColor: "#ff4d4f",
-              borderRadius: 8,
-              alignItems: "center",
-              marginBottom: 0,
-              marginTop: "auto",
-            }}
-          >
-            <Text style={{ color: "#fff", fontWeight: "600" }}>Logout</Text>
-          </Pressable>
+        <View style={styles.logout}>
+          <Button variant="danger" onPress={onLogout}>
+            Logout
+          </Button>
         </View>
       </ScrollView>
     </>
   );
 }
+
+const styles = {
+  saveForLaterError: {
+    gap: DesignTokens.spacing.sm,
+  },
+  logout: {
+    marginTop: "auto" as const,
+    gap: DesignTokens.spacing.xs,
+  },
+};

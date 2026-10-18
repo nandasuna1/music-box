@@ -1,20 +1,28 @@
+import { DesignTokens } from "@/constants/theme";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   value?: number;
   onChange?: (rate: number) => void;
   size?: number;
+  disabled?: boolean;
 };
 
 export function RatingInput({
   value = 0,
   onChange = () => {},
-  size = 28,
+  size = DesignTokens.sizing.ratingStar,
+  disabled = false,
 }: Props) {
   return (
     <View style={styles.container}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <Pressable key={star} onPress={() => onChange(star)}>
+        <Pressable
+          key={star}
+          onPress={() => onChange(star)}
+          disabled={disabled}
+          style={disabled ? styles.disabled : undefined}
+        >
           <Text
             style={
               star <= value
@@ -40,9 +48,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   filled: {
-    color: "#FFD700",
+    color: DesignTokens.colors.accent,
   },
   empty: {
-    color: "#DDD",
+    color: DesignTokens.colors.textMuted,
+  },
+  disabled: {
+    opacity: DesignTokens.interaction.disabledOpacity,
   },
 });

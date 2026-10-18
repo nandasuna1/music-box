@@ -1,4 +1,5 @@
 import { SearchBar } from "@/components/SearchBar";
+import { DesignTokens } from "@/constants/theme";
 import { getTopAlbums } from "@/services/album/getTopAlbums";
 import { searchAlbums } from "@/services/album/searchAlbum";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -52,9 +53,7 @@ export default function Home() {
   if (isLoading) {
     return (
       <SafeAreaView>
-        <Text style={{ color: "#fff", textAlign: "center", marginTop: 20 }}>
-          Carregando...
-        </Text>
+        <Text style={styles.status}>Carregando...</Text>
       </SafeAreaView>
     );
   }
@@ -62,18 +61,14 @@ export default function Home() {
   if (error) {
     return (
       <SafeAreaView>
-        <Text style={{ color: "#fff", textAlign: "center", marginTop: 20 }}>
-          Erro ao carregar álbuns
-        </Text>
+        <Text style={styles.status}>Erro ao carregar álbuns</Text>
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView>
-      <Text style={{ color: "#fff", fontSize: 24, margin: 8 }}>
-        Popular essa semana
-      </Text>
+      <Text style={styles.heading}>Popular essa semana</Text>
       <SearchBar value={query} onChange={handleSearch} />
       <FlatList
         data={allAlbums}
@@ -81,24 +76,21 @@ export default function Home() {
         numColumns={2}
         renderItem={({ item }) => (
           <Pressable
-            style={{ flex: 1, margin: 8 }}
+            style={styles.albumItem}
             onPress={() => router.push(`/album/${item.id}`)}
           >
             <Image
               source={item.cover_medium}
-              style={{ width: "100%", aspectRatio: 1, borderRadius: 8 }}
+              style={styles.cover}
               contentFit="cover"
               cachePolicy="memory-disk"
             />
 
-            <Text
-              numberOfLines={1}
-              style={{ fontWeight: "600", color: "#fff" }}
-            >
+            <Text numberOfLines={1} style={styles.albumTitle}>
               {item.title}
             </Text>
 
-            <Text numberOfLines={1} style={{ color: "#666" }}>
+            <Text numberOfLines={1} style={styles.artist}>
               {item.artist.name}
             </Text>
           </Pressable>
@@ -113,8 +105,8 @@ export default function Home() {
           isFetchingNextPage ? (
             <ActivityIndicator
               size="large"
-              color="#fff"
-              style={{ marginVertical: 20 }}
+              color={DesignTokens.colors.accent}
+              style={styles.footer}
             />
           ) : null
         }
@@ -122,3 +114,35 @@ export default function Home() {
     </SafeAreaView>
   );
 }
+
+const styles = {
+  status: {
+    color: DesignTokens.colors.text,
+    textAlign: "center" as const,
+    marginTop: DesignTokens.spacing.xl,
+  },
+  heading: {
+    color: DesignTokens.colors.text,
+    fontSize: DesignTokens.typography.title,
+    margin: DesignTokens.spacing.sm,
+  },
+  albumItem: {
+    flex: 1,
+    margin: DesignTokens.spacing.sm,
+  },
+  cover: {
+    width: "100%" as const,
+    aspectRatio: 1,
+    borderRadius: DesignTokens.radii.sm,
+  },
+  albumTitle: {
+    fontWeight: DesignTokens.fontWeight.semibold,
+    color: DesignTokens.colors.text,
+  },
+  artist: {
+    color: DesignTokens.colors.textSubtle,
+  },
+  footer: {
+    marginVertical: DesignTokens.spacing.xl,
+  },
+};

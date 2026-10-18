@@ -1,4 +1,6 @@
-import { StyleSheet, TextInput, View } from "react-native";
+import { DesignTokens } from "@/constants/theme";
+import { View } from "react-native";
+import { TextField } from "./TextField";
 
 type Props = {
   value: string;
@@ -8,26 +10,20 @@ type Props = {
 export function SearchBar({ value, onChange }: Props) {
   return (
     <View style={styles.container}>
-      <TextInput
+      <TextField
         placeholder="Buscar álbuns"
         value={value}
         onChangeText={onChange}
         autoCorrect={false}
         autoCapitalize="none"
-        style={styles.input}
         testID="search-bar-input"
       />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
-    padding: 8,
+    padding: DesignTokens.spacing.sm,
   },
-  input: {
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-    padding: 12,
-  },
-});
+};

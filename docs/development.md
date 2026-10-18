@@ -34,6 +34,12 @@ The web target is available with `npm run web`, but the app's configured
 Google sign-in uses the native SDK and is not a complete web authentication
 implementation.
 
+Native iOS and Android are the prioritized platforms for this sample. The
+project deliberately retains Expo and should not be presented as a React Native
+CLI app. See the [interview-sample quality contract](refactor/quality-contract.md)
+for the supported-platform boundary, demo journey, and shared validation
+baseline.
+
 ## Project scripts
 
 | Command                | Description                           |
@@ -61,6 +67,10 @@ and pushes to the configured main branches. Run checks locally with:
 npm run lint
 npm test -- --runInBand
 ```
+
+The current baseline results and known formatting failures are recorded in the
+[interview-sample quality contract](refactor/quality-contract.md). The PR
+workflow currently ignores documentation-only changes.
 
 ## EAS profiles
 

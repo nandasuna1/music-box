@@ -32,16 +32,54 @@ without adding those group names to the URL.
 
 ## Shared components
 
-| Component/module                                           | Responsibility                                                 |
-| ---------------------------------------------------------- | -------------------------------------------------------------- |
-| `components/GoogleLoginButton.tsx`                         | Presents the Google sign-in action                             |
-| `components/SearchBar.tsx`                                 | Controlled album-search input                                  |
-| `components/RatingInput.tsx`                               | Displays and captures a rating                                 |
-| `components/Loading.tsx`                                   | Shared loading presentation                                    |
-| `components/profileComponents.tsx`                         | Profile header, statistics, review cards, and saved-album list |
-| `components/themed-text.tsx`, `components/themed-view.tsx` | Theme-aware text and view primitives                           |
-| `components/haptic-tab.tsx`                                | Tab interaction with haptic feedback                           |
-| `components/ui/icon-symbol*.tsx`                           | Platform-aware tab/action icons                                |
+| Component/module                                           | Responsibility                                                            |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `components/Button.tsx`                                    | Shared primary, secondary, and danger action with disabled/loading states |
+| `components/TextField.tsx`                                 | Controlled text input with focused, disabled, and error presentation      |
+| `components/GoogleLoginButton.tsx`                         | Presents the Google sign-in action using the shared button                |
+| `components/SearchBar.tsx`                                 | Controlled album-search input using the shared text field                 |
+| `components/RatingInput.tsx`                               | Displays and captures a rating; supports a disabled state                 |
+| `components/Loading.tsx`                                   | Shared loading presentation                                               |
+| `components/profileComponents.tsx`                         | Profile header, statistics, review cards, and labeled saved-album cards   |
+| `components/themed-text.tsx`, `components/themed-view.tsx` | Theme-aware text and view primitives                                      |
+| `components/haptic-tab.tsx`                                | Tab interaction with haptic feedback                                      |
+| `components/ui/icon-symbol*.tsx`                           | Platform-aware tab/action icons                                           |
+
+## Visual tokens and control contracts
+
+`constants/theme.ts` exports `DesignTokens` for app feature surfaces. Its
+semantic colors cover the dark background and elevated surfaces, primary and
+muted text, gold accent, border, danger, and disabled states. The same export
+provides spacing, typography sizes and line heights, named `fontWeight`
+values, common control/avatar/artwork/icon dimensions, corner radii, card
+elevation, and basic interaction-state values. Existing `Colors` and `Fonts`
+exports remain for theme-aware template components.
+
+Use these tokens instead of adding new one-off colors or spacing values when
+styling the app's dark/gold feature UI. The tokens do not currently implement
+a light-mode redesign. Fixed semantic dimensions (such as avatar and artwork
+sizes) use `DesignTokens.sizing`; responsive percentages, full-width artwork,
+and computed icon dimensions remain layout-specific. `marginTop: "auto"` is
+kept where it expresses flex layout rather than a spacing value.
+
+- `Button` takes string children and an `onPress` handler. `variant` selects
+  `primary` (gold), `secondary` (raised dark surface), or `danger`; `disabled`
+  blocks presses, while `loading` also blocks presses and can show a
+  `loadingText`. A pressed primary action uses a darker gold; disabled/loading
+  actions use the shared muted state.
+- `TextField` is controlled through `value` and `onChangeText`. Optional
+  `disabled` prevents editing; optional `error` presents an error border and
+  message. Standard `TextInput` props remain available.
+- `SearchBar` keeps its controlled `value`/`onChange` API and delegates visual
+  input behavior to `TextField`.
+- `RatingInput` keeps its existing `value`, `onChange`, and `size` API and
+  accepts `disabled` to prevent changes while visually indicating the state.
+- Saved-album cards display the cover, album title, and artist; if loading
+  fails, the profile offers a retry action instead of leaving the error
+  without recovery.
+
+These are visual and interaction contracts, not a substitute for W2's
+accessibility semantics and device verification.
 
 ## State ownership
 

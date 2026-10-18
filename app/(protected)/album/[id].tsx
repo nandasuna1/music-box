@@ -1,6 +1,7 @@
 // src/app/album/[id].tsx
 import { Loading } from "@/components/Loading";
 import { RatingInput } from "@/components/RatingInput";
+import { DesignTokens } from "@/constants/theme";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAlbumById } from "@/services/album/getAlbumById";
@@ -104,42 +105,46 @@ export default function AlbumDetail() {
             <Text style={styles.title}>{data.title}</Text>
             <View
               style={{
-                display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
+                gap: DesignTokens.spacing.sm,
               }}
             >
               <Text style={styles.artist}>{data.artist.name}</Text>
               <Text style={styles.release}>{data.release_date}</Text>
             </View>
 
-            <View style={{ marginVertical: 8 }}>
+            <View style={styles.ratingSection}>
               {Boolean(review?.rating) && (
-                <Text style={{ color: "#666", fontSize: 16 }}>
-                  Sua avaliação
-                </Text>
+                <Text style={styles.reviewLabel}>Sua avaliação</Text>
               )}
               <View
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "flex-end",
-                  height: "auto",
-                  padding: 0,
                 }}
               >
                 <RatingInput value={review?.rating} onChange={rateAlbum} />
-                <Pressable onPress={saveForLater} disabled={isSavingForLater}>
+                <Pressable
+                  onPress={saveForLater}
+                  disabled={isSavingForLater}
+                  style={isSavingForLater ? styles.bookmarkDisabled : undefined}
+                >
                   <IconSymbol
-                    size={28}
+                    size={DesignTokens.sizing.icon}
                     name="bookmark.fill"
-                    color={isSavedForLater ? "#f3d61d" : "#8a8a8a"}
+                    color={
+                      isSavedForLater
+                        ? DesignTokens.colors.accent
+                        : DesignTokens.colors.textMuted
+                    }
                   />
                 </Pressable>
               </View>
               {Boolean(review?.comment) && (
-                <Text style={{ color: "#fff", marginTop: 4, marginLeft: 8 }}>
+                <Text style={styles.reviewComment}>
                   Voce achou: &quot;{review?.comment}&quot;
                 </Text>
               )}
@@ -166,54 +171,70 @@ export default function AlbumDetail() {
 
 const styles = StyleSheet.create({
   center: {
-    marginTop: 40,
+    marginTop: DesignTokens.spacing.xxxl,
     textAlign: "center",
+    color: DesignTokens.colors.text,
   },
   header: {
-    padding: 16,
+    padding: DesignTokens.spacing.lg,
   },
   cover: {
     width: "100%",
     aspectRatio: 1,
-    borderRadius: 12,
-    marginBottom: 16,
+    borderRadius: DesignTokens.radii.md,
+    marginBottom: DesignTokens.spacing.lg,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: DesignTokens.typography.title,
+    fontWeight: DesignTokens.fontWeight.bold,
+    color: DesignTokens.colors.text,
   },
   artist: {
-    fontSize: 18,
-    color: "#fff",
-    marginBottom: 4,
+    fontSize: DesignTokens.typography.subtitle,
+    color: DesignTokens.colors.text,
+    marginBottom: DesignTokens.spacing.xs,
   },
   release: {
-    fontSize: 14,
-    color: "#999",
+    fontSize: DesignTokens.typography.body,
+    color: DesignTokens.colors.textMuted,
+  },
+  ratingSection: {
+    marginVertical: DesignTokens.spacing.sm,
+  },
+  reviewLabel: {
+    color: DesignTokens.colors.textSubtle,
+    fontSize: DesignTokens.typography.body,
+  },
+  bookmarkDisabled: {
+    opacity: DesignTokens.interaction.disabledOpacity,
+  },
+  reviewComment: {
+    color: DesignTokens.colors.text,
+    marginTop: DesignTokens.spacing.xs,
+    marginLeft: DesignTokens.spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
-    color: "#fff",
+    fontSize: DesignTokens.typography.subtitle,
+    fontWeight: DesignTokens.fontWeight.semibold,
+    marginBottom: DesignTokens.spacing.sm,
+    color: DesignTokens.colors.text,
   },
   track: {
     flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing.lg,
+    paddingVertical: DesignTokens.spacing.sm,
     alignItems: "center",
   },
   trackIndex: {
-    width: 24,
-    color: "#999",
+    width: DesignTokens.sizing.trackIndexWidth,
+    color: DesignTokens.colors.textMuted,
   },
   trackTitle: {
     flex: 1,
-    color: "#fff",
+    color: DesignTokens.colors.text,
   },
   trackDuration: {
-    color: "#999",
-    marginLeft: 8,
+    color: DesignTokens.colors.textMuted,
+    marginLeft: DesignTokens.spacing.sm,
   },
 });
