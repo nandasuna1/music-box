@@ -1,4 +1,5 @@
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
+import { DesignTokens } from "@/constants/theme";
 import { login } from "@/services/auth/login";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -17,26 +18,22 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      {/* Logo / Nome */}
       <Text style={styles.logo}>vinyl.</Text>
 
-      {/* Copy */}
       <Text style={styles.title}>Seu diário musical</Text>
 
       <Text style={styles.subtitle}>
         Avalie álbuns, registre memórias e acompanhe sua jornada sonora.
       </Text>
 
-      {/* CTA */}
       <View style={styles.buttonWrapper}>
         <GoogleLoginButton login={handleLogin} />
       </View>
 
-      {/* Footer */}
       <Text style={styles.footer}>
         Ao continuar, você concorda com nossos termos.
       </Text>
-      {error && <Text style={{ color: "red", marginTop: 8 }}>{error}</Text>}
+      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 }
@@ -44,35 +41,39 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0E0E10",
+    backgroundColor: DesignTokens.colors.background,
     justifyContent: "center",
-    padding: 24,
+    padding: DesignTokens.spacing.xl,
   },
   logo: {
-    fontSize: 48,
-    fontWeight: "800",
-    color: "#FFD700",
-    marginBottom: 8,
+    fontSize: DesignTokens.typography.display,
+    fontWeight: DesignTokens.fontWeight.extraBold,
+    color: DesignTokens.colors.accent,
+    marginBottom: DesignTokens.spacing.sm,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#fff",
-    marginBottom: 8,
+    fontSize: DesignTokens.typography.title,
+    fontWeight: DesignTokens.fontWeight.bold,
+    color: DesignTokens.colors.text,
+    marginBottom: DesignTokens.spacing.sm,
   },
   subtitle: {
-    fontSize: 16,
-    color: "#aaa",
-    marginBottom: 32,
-    lineHeight: 22,
+    fontSize: DesignTokens.typography.body,
+    color: DesignTokens.colors.textMuted,
+    marginBottom: DesignTokens.spacing.xxl,
+    lineHeight: DesignTokens.typography.lineHeight.body,
   },
   buttonWrapper: {
-    marginTop: 16,
+    marginTop: DesignTokens.spacing.lg,
   },
   footer: {
-    marginTop: 24,
-    fontSize: 12,
-    color: "#666",
+    marginTop: DesignTokens.spacing.xl,
+    fontSize: DesignTokens.typography.caption,
+    color: DesignTokens.colors.textSubtle,
     textAlign: "center",
+  },
+  error: {
+    color: DesignTokens.colors.danger,
+    marginTop: DesignTokens.spacing.sm,
   },
 });

@@ -2,32 +2,32 @@
 
 import { Album, AlbumRating } from "@/types/Album";
 import { UserProfile } from "@/types/User";
-import Feather from '@expo/vector-icons/Feather';
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { DesignTokens } from "@/constants/theme";
+import Feather from "@expo/vector-icons/Feather";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { RatingInput } from "./RatingInput";
 
 export function ProfilePic({
   avatar,
-  user,}: {
+  user,
+}: {
   avatar?: string | null;
   user?: UserProfile | null;
 }) {
   return (
     <>
-      {(avatar || user?.photoURL) ? (
+      {avatar || user?.photoURL ? (
         <Image
           source={{ uri: avatar ?? user?.photoURL ?? undefined }}
           style={styles.avatar}
         />
       ) : (
         <View style={[styles.avatar, styles.avatarPlaceholder]}>
-          <Feather name="user" size={24} color="yellow" />
+          <Feather
+            name="user"
+            size={DesignTokens.typography.title}
+            color={DesignTokens.colors.accent}
+          />
         </View>
       )}
     </>
@@ -85,43 +85,41 @@ export function HorizontalList({ items }: { items: Album[] }) {
 export function AlbumCard({ album }: { album: Album }) {
   return (
     <View style={styles.card}>
-      <Image
-        source={{ uri: album.cover }}
-        style={{ width: 120, aspectRatio: 1, borderRadius: 8 }}
-      />
+      <Image source={{ uri: album.cover }} style={styles.albumCover} />
+      <Text numberOfLines={1} style={styles.savedAlbumTitle}>
+        {album.title}
+      </Text>
+      <Text numberOfLines={1} style={styles.savedAlbumArtist}>
+        {album.artist}
+      </Text>
     </View>
   );
 }
 
 export function ReviewCard({ item }: { item: AlbumRating }) {
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        gap: 8,
-        marginVertical: 4,
-      }}
-    >
-      <Image
-        source={{ uri: item.cover }}
-        style={{ width: "25%", aspectRatio: 1, borderRadius: 8 }}
-      />
-      <View style={{ flexShrink: 1 }}>
+    <View style={styles.reviewCard}>
+      <Image source={{ uri: item.cover }} style={styles.reviewCover} />
+      <View style={styles.reviewContent}>
+        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.reviewTitle}>
+          {item.title}
+        </Text>
         <Text
           numberOfLines={1}
           ellipsizeMode="tail"
-          style={{
-            fontWeight: "600",
-            color: "#fff",
-          }}
+          style={styles.reviewArtist}
         >
-          {item.title}
-        </Text>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "#666" }}>
           {item.artist}
         </Text>
-        <RatingInput value={item?.rating} size={12} />
-        <Text numberOfLines={2} ellipsizeMode="tail" style={{ color: "#666" }}>
+        <RatingInput
+          value={item?.rating}
+          size={DesignTokens.sizing.compactRatingStar}
+        />
+        <Text
+          numberOfLines={2}
+          ellipsizeMode="tail"
+          style={styles.reviewComment}
+        >
           {item.comment}
         </Text>
       </View>
@@ -133,84 +131,121 @@ export function ReviewCard({ item }: { item: AlbumRating }) {
 
 export const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: DesignTokens.spacing.lg,
   },
   /* Header */
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 24,
+    gap: DesignTokens.spacing.md,
+    marginBottom: DesignTokens.spacing.xl,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: DesignTokens.sizing.avatar,
+    height: DesignTokens.sizing.avatar,
+    borderRadius: DesignTokens.radii.avatar,
   },
   avatarPlaceholder: {
-    backgroundColor: "#222",
+    backgroundColor: DesignTokens.colors.surfaceElevated,
     justifyContent: "center",
     alignItems: "center",
   },
   avatarText: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "700",
+    color: DesignTokens.colors.text,
+    fontSize: DesignTokens.typography.title,
+    fontWeight: DesignTokens.fontWeight.bold,
   },
   name: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: DesignTokens.typography.section,
+    fontWeight: DesignTokens.fontWeight.bold,
+    color: DesignTokens.colors.text,
   },
   username: {
-    color: "#888",
+    color: DesignTokens.colors.textMuted,
   },
 
   /* Stats */
   stats: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 32,
+    marginBottom: DesignTokens.spacing.xxl,
   },
   stat: {
     alignItems: "center",
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#888",
+    fontSize: DesignTokens.typography.title,
+    fontWeight: DesignTokens.fontWeight.bold,
+    color: DesignTokens.colors.textMuted,
   },
   statLabel: {
-    fontSize: 12,
-    color: "#777",
-    marginTop: 2,
+    fontSize: DesignTokens.typography.caption,
+    color: DesignTokens.colors.textSubtle,
+    marginTop: DesignTokens.spacing.xxs,
   },
 
   /* Sections */
   section: {
-    marginBottom: 32,
+    marginBottom: DesignTokens.spacing.xxl,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 12,
-    color: "#888",
+    fontSize: DesignTokens.typography.body,
+    fontWeight: DesignTokens.fontWeight.semibold,
+    marginBottom: DesignTokens.spacing.md,
+    color: DesignTokens.colors.textMuted,
   },
 
   /* Cards */
   card: {
-    width: 120,
-    marginRight: 12,
+    width: DesignTokens.sizing.albumArtwork,
+    marginRight: DesignTokens.spacing.md,
   },
   cover: {
-    width: 120,
-    height: 120,
-    borderRadius: 8,
-    backgroundColor: "#1f1f1f",
+    width: DesignTokens.sizing.albumArtwork,
+    height: DesignTokens.sizing.albumArtwork,
+    borderRadius: DesignTokens.radii.sm,
+    backgroundColor: DesignTokens.colors.surfaceElevated,
   },
 
   empty: {
-    color: "#888",
+    color: DesignTokens.colors.textMuted,
     fontStyle: "italic",
+  },
+  albumCover: {
+    width: DesignTokens.sizing.albumArtwork,
+    aspectRatio: 1,
+    borderRadius: DesignTokens.radii.sm,
+  },
+  savedAlbumTitle: {
+    color: DesignTokens.colors.text,
+    fontWeight: DesignTokens.fontWeight.semibold,
+    marginTop: DesignTokens.spacing.xs,
+  },
+  savedAlbumArtist: {
+    color: DesignTokens.colors.textMuted,
+    fontSize: DesignTokens.typography.caption,
+  },
+  reviewCard: {
+    flexDirection: "row",
+    gap: DesignTokens.spacing.sm,
+    marginVertical: DesignTokens.spacing.xs,
+  },
+  reviewCover: {
+    width: "25%",
+    aspectRatio: 1,
+    borderRadius: DesignTokens.radii.sm,
+  },
+  reviewContent: {
+    flexShrink: 1,
+  },
+  reviewTitle: {
+    fontWeight: DesignTokens.fontWeight.semibold,
+    color: DesignTokens.colors.text,
+  },
+  reviewArtist: {
+    color: DesignTokens.colors.textMuted,
+  },
+  reviewComment: {
+    color: DesignTokens.colors.textMuted,
   },
 });

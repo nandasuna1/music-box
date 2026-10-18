@@ -6,12 +6,13 @@ or REST API. The client connects directly to Deezer and Firebase.
 
 ## Architecture by layer
 
-| Document                                   | What it covers                                                                                              |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| [Components](components.md)                | Screens, routes, shared UI, app state, and source layout                                                    |
-| [Network and data](network.md)             | Deezer HTTP requests, Firebase client service operations, Firestore model, caching                          |
-| [Security and configuration](security.md)  | Google/Firebase authentication, session persistence, environment values, Firebase security responsibilities |
-| [Development and delivery](development.md) | Requirements, local setup, scripts, tests, CI, and EAS build profiles                                       |
+| Document                                                          | What it covers                                                                                              |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [Components](components.md)                                       | Screens, routes, shared UI, app state, and source layout                                                    |
+| [Network and data](network.md)                                    | Deezer HTTP requests, Firebase client service operations, Firestore model, caching                          |
+| [Security and configuration](security.md)                         | Google/Firebase authentication, session persistence, environment values, Firebase security responsibilities |
+| [Development and delivery](development.md)                        | Requirements, local setup, scripts, tests, CI, and EAS build profiles                                       |
+| [Interview-sample quality contract](refactor/quality-contract.md) | Supported platforms, demo journey, baseline checks, and shared definition of done                           |
 
 ## System overview
 
