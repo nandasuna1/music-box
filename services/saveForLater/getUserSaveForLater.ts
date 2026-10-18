@@ -1,14 +1,22 @@
 import { db } from "@/services/firebase";
 import { SaveForLaterAlbum } from "@/types/Album";
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 export async function getUserSaveForLater(
-  userId?: string,
+  userId: string,
   max = 3,
 ): Promise<SaveForLaterAlbum[]> {
   const q = query(
     collection(db, "saveForLater"),
     where("userId", "==", userId),
+    orderBy("savedAt", "desc"),
     limit(max),
   );
 

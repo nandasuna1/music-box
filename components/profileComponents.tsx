@@ -2,38 +2,35 @@
 
 import { Album, AlbumRating } from "@/types/Album";
 import { UserProfile } from "@/types/User";
+import Feather from '@expo/vector-icons/Feather';
 import {
   Image,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 import { RatingInput } from "./RatingInput";
 
 export function ProfilePic({
   avatar,
-  user,
-  pickImage,
-}: {
+  user,}: {
   avatar?: string | null;
   user?: UserProfile | null;
-  pickImage: () => void;
 }) {
   return (
-    <Pressable onPress={pickImage}>
-      {avatar || user?.photoURL ? (
+    <>
+      {(avatar || user?.photoURL) ? (
         <Image
           source={{ uri: avatar ?? user?.photoURL ?? undefined }}
           style={styles.avatar}
         />
       ) : (
         <View style={[styles.avatar, styles.avatarPlaceholder]}>
-          <Text style={styles.avatarText}>+</Text>
+          <Feather name="user" size={24} color="yellow" />
         </View>
       )}
-    </Pressable>
+    </>
   );
 }
 

@@ -65,29 +65,25 @@ describe("login", () => {
     expect(logger.error).not.toHaveBeenCalled();
   });
 
-  it("logs an error if Play Services are unavailable, but still attempts sign-in", async () => {
+  it("logs an error and stops if Play Services are unavailable", async () => {
     const playServicesError = new Error("Play services outdated");
     (GoogleSignin.hasPlayServices as jest.Mock).mockRejectedValue(
       playServicesError,
     );
-    (GoogleSignin.signIn as jest.Mock).mockResolvedValue({
-      data: { idToken: "valid-token" },
-    });
-
-    await login();
+    await expect(login()).rejects.toThrow("Google services are unavailable");
 
     expect(logger.error).toHaveBeenCalledWith(
       "Google services are unavailable",
       { err: playServicesError },
     );
-    expect(GoogleSignin.signIn).toHaveBeenCalled();
+    expect(GoogleSignin.signIn).not.toHaveBeenCalled();
   });
 
   it("logs an error when Google sign-in fails to return an idToken", async () => {
     (GoogleSignin.hasPlayServices as jest.Mock).mockResolvedValue(true);
     (GoogleSignin.signIn as jest.Mock).mockResolvedValue({ data: null });
 
-    await login();
+    await expect(login()).rejects.toThrow("Google sign-in failed");
 
     expect(signInWithCredential).not.toHaveBeenCalled();
     expect(upsertUser).not.toHaveBeenCalled();
@@ -109,7 +105,7 @@ describe("login", () => {
     });
     (signInWithCredential as jest.Mock).mockRejectedValue(authError);
 
-    await login();
+    await expect(login()).rejects.toThrow("Google sign-in failed");
 
     expect(upsertUser).not.toHaveBeenCalled();
     expect(logger.error).toHaveBeenCalledWith("Google sign-in failed", {
