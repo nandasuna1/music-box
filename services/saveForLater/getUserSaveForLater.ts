@@ -1,6 +1,13 @@
 import { db } from "@/services/firebase";
 import { SaveForLaterAlbum } from "@/types/Album";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 export async function getUserSaveForLater(
   userId: string,
@@ -9,26 +16,21 @@ export async function getUserSaveForLater(
   const q = query(
     collection(db, "saveForLater"),
     where("userId", "==", userId),
+    orderBy("savedAt", "desc"),
+    limit(max),
   );
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs
-    .sort(
-      (a, b) =>
-        (b.data().savedAt?.toMillis() ?? 0) -
-        (a.data().savedAt?.toMillis() ?? 0),
-    )
-    .slice(0, max)
-    .map((doc) => {
-      const data = doc.data();
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
 
-      return {
-        albumId: data.albumId,
-        title: data.album.title,
-        artist: data.album.artist,
-        cover: data.album.cover,
-        savedAt: data.savedAt.toDate().toISOString(),
-      };
-    });
+    return {
+      albumId: data.albumId,
+      title: data.album.title,
+      artist: data.album.artist,
+      cover: data.album.cover,
+      savedAt: data.savedAt.toDate().toISOString(),
+    };
+  });
 }

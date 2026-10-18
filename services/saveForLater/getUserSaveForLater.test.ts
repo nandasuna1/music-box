@@ -7,6 +7,8 @@ jest.mock("@/services/firebase", () => ({ db: {} }));
 jest.mock("firebase/firestore", () => ({
   collection: jest.fn(),
   getDocs: (...args: unknown[]) => mockGetDocs(...args),
+  limit: jest.fn(),
+  orderBy: jest.fn(),
   query: jest.fn(),
   where: jest.fn(),
 }));
@@ -36,10 +38,9 @@ describe("getUserSaveForLater", () => {
   it("returns the most recently saved albums up to the requested limit", async () => {
     mockGetDocs.mockResolvedValue({
       docs: [
-        createSavedAlbum(1, 1000),
         createSavedAlbum(2, 4000),
-        createSavedAlbum(3, 2000),
         createSavedAlbum(4, 3000),
+        createSavedAlbum(3, 2000),
       ],
     });
 
