@@ -3,12 +3,12 @@ import { logger } from "@/utils/logger";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import { upsertUser } from "../user/upsert";
+import { syncUserProfile } from "./syncUserProfile";
 import { login } from "./login";
 
 // Mock external dependencies
 jest.mock("@react-native-google-signin/google-signin", () => ({
   GoogleSignin: {
-    hasPlayServices: jest.fn(),
     signIn: jest.fn(),
   },
 }));
@@ -20,7 +20,7 @@ jest.mock("firebase/auth", () => ({
   signInWithCredential: jest.fn(),
 }));
 
-jest.mock("@/services/firebase", () => ({
+jest.mock("@/services/providers/firebase/firebase", () => ({
   auth: {
     currentUser: null,
   },
@@ -28,12 +28,17 @@ jest.mock("@/services/firebase", () => ({
 
 jest.mock("@/utils/logger", () => ({
   logger: {
+    info: jest.fn(),
     error: jest.fn(),
   },
 }));
 
 jest.mock("../user/upsert", () => ({
   upsertUser: jest.fn(),
+}));
+
+jest.mock("./syncUserProfile", () => ({
+  syncUserProfile: jest.fn(),
 }));
 
 describe("login", () => {
@@ -46,7 +51,6 @@ describe("login", () => {
     const mockUser = { uid: "user-123", email: "user@example.com" };
     const mockToken = "mock-id-token";
 
-    (GoogleSignin.hasPlayServices as jest.Mock).mockResolvedValue(true);
     (GoogleSignin.signIn as jest.Mock).mockResolvedValue({
       data: { idToken: mockToken },
     });
@@ -62,54 +66,55 @@ describe("login", () => {
       `mock-credential-${mockToken}`,
     );
     expect(upsertUser).toHaveBeenCalledWith(mockUser);
+    expect(syncUserProfile).toHaveBeenCalled();
     expect(logger.error).not.toHaveBeenCalled();
   });
 
-  it("logs an error and stops if Play Services are unavailable", async () => {
-    const playServicesError = new Error("Play services outdated");
-    (GoogleSignin.hasPlayServices as jest.Mock).mockRejectedValue(
-      playServicesError,
-    );
-    await expect(login()).rejects.toThrow("Google services are unavailable");
-
-    expect(logger.error).toHaveBeenCalledWith(
-      "Google services are unavailable",
-      { err: playServicesError },
-    );
-    expect(GoogleSignin.signIn).not.toHaveBeenCalled();
-  });
-
-  it("logs an error when Google sign-in fails to return an idToken", async () => {
-    (GoogleSignin.hasPlayServices as jest.Mock).mockResolvedValue(true);
+  it("rejects when Google sign-in does not return an ID token", async () => {
     (GoogleSignin.signIn as jest.Mock).mockResolvedValue({ data: null });
 
-    await expect(login()).rejects.toThrow("Google sign-in failed");
+    await expect(login()).rejects.toThrow("Google ID Token not found");
 
     expect(signInWithCredential).not.toHaveBeenCalled();
     expect(upsertUser).not.toHaveBeenCalled();
-    expect(logger.error).toHaveBeenCalledWith(
-      "Google sign-in failed",
-      expect.objectContaining({
-        err: expect.objectContaining({
-          message: "Google ID Token not found",
-        }),
-      }),
-    );
+    expect(syncUserProfile).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledWith("Login flow failed", {
+      err: expect.any(Error),
+    });
   });
 
-  it("logs an error when signInWithCredential throws", async () => {
+  it("propagates Firebase credential errors", async () => {
     const authError = new Error("Firebase Auth Error");
-    (GoogleSignin.hasPlayServices as jest.Mock).mockResolvedValue(true);
     (GoogleSignin.signIn as jest.Mock).mockResolvedValue({
       data: { idToken: "valid-token" },
     });
     (signInWithCredential as jest.Mock).mockRejectedValue(authError);
 
-    await expect(login()).rejects.toThrow("Google sign-in failed");
+    await expect(login()).rejects.toBe(authError);
 
     expect(upsertUser).not.toHaveBeenCalled();
-    expect(logger.error).toHaveBeenCalledWith("Google sign-in failed", {
+    expect(logger.error).toHaveBeenCalledWith("Login flow failed", {
       err: authError,
     });
+  });
+
+  it("shares an in-flight sign-in request between concurrent callers", async () => {
+    let resolveSignIn!: (result: { data: { idToken: string } }) => void;
+    (GoogleSignin.signIn as jest.Mock).mockReturnValue(
+      new Promise((resolve) => {
+        resolveSignIn = resolve;
+      }),
+    );
+    (signInWithCredential as jest.Mock).mockImplementation(async () => {
+      (auth as any).currentUser = null;
+    });
+
+    const first = login();
+    const second = login();
+    expect(second).toBe(first);
+    resolveSignIn({ data: { idToken: "token" } });
+    await Promise.all([first, second]);
+
+    expect(GoogleSignin.signIn).toHaveBeenCalledTimes(1);
   });
 });

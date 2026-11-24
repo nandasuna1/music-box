@@ -21,6 +21,9 @@ export function RatingInput({
           key={star}
           onPress={() => onChange(star)}
           disabled={disabled}
+          accessibilityRole="button"
+          accessibilityLabel={`Rate ${star} out of 5`}
+          accessibilityState={{ disabled, selected: star <= (value ?? 0) }}
           style={disabled ? styles.disabled : undefined}
         >
           {value !== null && (

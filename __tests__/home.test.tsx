@@ -12,8 +12,8 @@ import { useRouter } from "expo-router";
 import React from "react";
 
 // Mock das dependências externas
-jest.mock("@/services/album/getTopAlbums");
-jest.mock("@/services/album/searchAlbum");
+jest.mock("@/services/providers/deezer/getTopAlbums");
+jest.mock("@/services/providers/deezer/searchAlbum");
 jest.mock("expo-router", () => ({
   useRouter: jest.fn(),
 }));
@@ -38,6 +38,7 @@ const createTestQueryClient = () =>
     defaultOptions: {
       queries: {
         retry: false, // Desabilita retentativas em testes para falhar rapidamente
+        gcTime: Infinity,
       },
     },
   });

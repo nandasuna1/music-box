@@ -15,6 +15,7 @@ import { StyleSheet, Text, View } from "react-native";
 export default function RateAlbum() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const { user } = useAuth();
 
   const { albumId, title, artist, cover } = useLocalSearchParams<{
@@ -48,6 +49,7 @@ export default function RateAlbum() {
     if (!albumId || rating === 0 || !user) return;
 
     setLoading(true);
+    setSaveError(null);
 
     try {
       const savedReview = await upsertAlbumReview(albumId, rating, comment);
@@ -61,15 +63,16 @@ export default function RateAlbum() {
         queryKey: ["user-recent-reviews", user.uid],
       });
 
-    } catch (err) {
-      logger.error("Failed to save review", { err });
-    } finally {
-      setLoading(false);
       if (router.canGoBack()) {
         router.back();
       } else {
         router.replace(`/album/${albumId}`);
       }
+    } catch (err) {
+      logger.error("Failed to save review", { err });
+      setSaveError("Não foi possível salvar sua avaliação. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -87,6 +90,8 @@ export default function RateAlbum() {
         multiline
         style={styles.input}
       />
+
+      {saveError ? <Text accessibilityRole="alert">{saveError}</Text> : null}
 
       <Button
         onPress={handleSave}

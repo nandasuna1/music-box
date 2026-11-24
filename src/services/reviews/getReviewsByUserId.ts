@@ -15,6 +15,7 @@ export async function getReviewsByUserId(userId: string, limit: number = 5) {
   if (recentReviews.length === 0) return [];
 
   const albumIds = recentReviews.map((review) => review.album_id);
+  
   const { data: albums, error } = await supabase
     .from("album_catalog")
     .select("album_id, album_title, artist_id, cover_url")

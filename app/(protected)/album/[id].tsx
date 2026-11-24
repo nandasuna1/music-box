@@ -133,6 +133,12 @@ export default function AlbumDetail() {
                 <Pressable
                   onPress={saveForLater}
                   disabled={isSavingForLater}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    isSavedForLater
+                      ? "Remove from Listen Later"
+                      : "Save to Listen Later"
+                  }
                   style={isSavingForLater ? styles.bookmarkDisabled : undefined}
                 >
                   <IconSymbol
