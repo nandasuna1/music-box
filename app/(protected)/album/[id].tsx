@@ -1,13 +1,12 @@
 // src/app/album/[id].tsx
 import { Loading } from "@/components/Loading";
 import { RatingInput } from "@/components/RatingInput";
-import { DesignTokens } from "@/constants/theme";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { DesignTokens } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { getAlbumById } from "@/services/album/getAlbumById";
-import { getIsFavoriteAlbum } from "@/services/album/getIsFavoriteAlbum";
-import { toggleSaveForLater } from "@/services/album/toggleSaveForLater";
-import { getUserAlbumReview } from "@/services/user/getUserAlbumReview";
+import { addToListenLater, isInListenLater, removeFromListenLater } from "@/features/listen-later/services";
+import { getAlbumById } from "@/services/providers/deezer/getAlbumById";
+import { getReviewByAlbumAndUserId } from "@/services/reviews/getReviewByAlbumAndUserId";
 import { formatDuration } from "@/utils/dataFormatter";
 import { logger } from "@/utils/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -29,31 +28,31 @@ export default function AlbumDetail() {
 
   const queryClient = useQueryClient();
 
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: albumId } = useLocalSearchParams<{ id: string }>();
 
   const { data: review } = useQuery({
-    queryKey: ["album-review", user?.uid, Number(id)],
-    queryFn: () => getUserAlbumReview(Number(id)),
-    enabled: !!user && !!id,
+    queryKey: ["album-review", user?.uid, Number(albumId)],
+    queryFn: () => getReviewByAlbumAndUserId(albumId),
+    enabled: !!user && !!albumId,
   });
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["album", id],
-    queryFn: () => getAlbumById(id),
-    enabled: !!id,
+  const { data: album, isLoading, error } = useQuery({
+    queryKey: ["album", albumId],
+    queryFn: () => getAlbumById(albumId),
+    enabled: !!albumId,
   });
 
   const { data: isSavedForLater } = useQuery({
-    queryKey: ["album-favorite", user?.uid, Number(id)],
-    queryFn: () => getIsFavoriteAlbum(Number(id)),
-    enabled: !!user?.uid && !!id,
+    queryKey: ["is-listen-later", user?.uid, Number(albumId)],
+    queryFn: () => isInListenLater(Number(albumId)),
+    enabled: !!user && !!albumId,
   });
 
   if (isLoading) {
     return <Loading />;
   }
 
-  if (error || !data) {
+  if (error || !album) {
     return <Text style={styles.center}>Erro ao carregar álbum</Text>;
   }
 
@@ -61,31 +60,35 @@ export default function AlbumDetail() {
     router.push({
       pathname: "/album/rate",
       params: {
-        albumId: data.id,
-        title: data.title,
-        artist: data.artist.name,
-        cover: data.cover_big,
+        albumId: album.id,
+        title: album.title,
+        artist: album.artist.name,
+        cover: album.cover_big,
       },
     });
   };
 
   const saveForLater = async () => {
     if (!user || isSavingForLater) return;
-
     setIsSavingForLater(true);
-    try {
-      const result = await toggleSaveForLater(data);
-      queryClient.setQueryData(
-        ["album-favorite", user.uid, Number(id)],
-        result.isSaved,
-      );
 
+    try {
+      if (!isSavedForLater) {
+          await addToListenLater({...album, genre_id: album.genre_id});
+      } else {
+        await removeFromListenLater(album.id);
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["is-listen-later", user.uid],
+      });
       queryClient.invalidateQueries({
         queryKey: ["save-for-later", user.uid],
       });
       queryClient.invalidateQueries({
         queryKey: ["user-profile", user.uid],
       });
+
     } catch (e) {
       logger.error("Failed to update save-for-later state", { e });
     } finally {
@@ -96,13 +99,13 @@ export default function AlbumDetail() {
   return (
     <>
       <FlatList
-        data={data.tracks.data}
+        data={album?.tracks.data}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Image source={{ uri: data.cover_big }} style={styles.cover} />
+            <Image source={{ uri: album?.cover_big }} style={styles.cover} />
 
-            <Text style={styles.title}>{data.title}</Text>
+            <Text style={styles.title}>{album?.title}</Text>
             <View
               style={{
                 flexDirection: "row",
@@ -111,8 +114,8 @@ export default function AlbumDetail() {
                 gap: DesignTokens.spacing.sm,
               }}
             >
-              <Text style={styles.artist}>{data.artist.name}</Text>
-              <Text style={styles.release}>{data.release_date}</Text>
+              <Text style={styles.artist}>{album?.artist.name}</Text>
+              <Text style={styles.release}>{album?.release_date}</Text>
             </View>
 
             <View style={styles.ratingSection}>
@@ -130,6 +133,12 @@ export default function AlbumDetail() {
                 <Pressable
                   onPress={saveForLater}
                   disabled={isSavingForLater}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    isSavedForLater
+                      ? "Remove from Listen Later"
+                      : "Save to Listen Later"
+                  }
                   style={isSavingForLater ? styles.bookmarkDisabled : undefined}
                 >
                   <IconSymbol

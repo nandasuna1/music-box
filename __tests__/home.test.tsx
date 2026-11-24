@@ -1,19 +1,19 @@
 import Home from "@/app/(protected)/(tabs)";
-import { getTopAlbums } from "@/services/album/getTopAlbums";
-import { searchAlbums } from "@/services/album/searchAlbum";
+import { getTopAlbums } from "@/services/providers/deezer/getTopAlbums";
+import { searchAlbums } from "@/services/providers/deezer/searchAlbum";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
 } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 
 // Mock das dependências externas
-jest.mock("@/services/album/getTopAlbums");
-jest.mock("@/services/album/searchAlbum");
+jest.mock("@/services/providers/deezer/getTopAlbums");
+jest.mock("@/services/providers/deezer/searchAlbum");
 jest.mock("expo-router", () => ({
   useRouter: jest.fn(),
 }));
@@ -38,6 +38,7 @@ const createTestQueryClient = () =>
     defaultOptions: {
       queries: {
         retry: false, // Desabilita retentativas em testes para falhar rapidamente
+        gcTime: Infinity,
       },
     },
   });

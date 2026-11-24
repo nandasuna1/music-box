@@ -4,7 +4,7 @@
     "slug": "music-box",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/vynil-icon.png",
+    "icon": "./src/assets/images/vynil-icon.png",
     "scheme": "musicbox",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -18,8 +18,8 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffcc00",
-        "foregroundImage": "./assets/images/vynil-icon.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./src/assets/images/vynil-icon.png",
+        "monochromeImage": "./src/assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -28,14 +28,14 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./src/assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/vynil-icon.png",
+          "image": "./src/assets/images/vynil-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -59,7 +59,8 @@
           "organization": "nandasuna",
           "project": "music-box"
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,
