@@ -7,6 +7,7 @@ module.exports = {
     "node_modules/(?!(jest-)?react-native|@react-native|expo(nent)?|@expo|expo-modules-core|react-navigation|@react-navigation|firebase|@firebase)",
   ],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/$1",
+    "^@/app/(.*)$": "<rootDir>/app/$1",
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
 };

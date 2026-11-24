@@ -1,6 +1,5 @@
-import { Loading } from "@/components/Loading";
 import { Button } from "@/components/Button";
-import { DesignTokens } from "@/constants/theme";
+import { Loading } from "@/components/Loading";
 import {
   HeaderName,
   HorizontalList,
@@ -10,11 +9,13 @@ import {
   Stat,
   styles as profileStyles,
 } from "@/components/profileComponents";
+import { DesignTokens } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
+import { getListenLaterByUserId } from "@/features/listen-later/services/getListenLaterByUserId";
 import { handleLogout } from "@/services/auth/logout";
-import { getUserRecentReviews } from "@/services/reviews/getUserRecentReviews";
-import { getUserSaveForLater } from "@/services/saveForLater/getUserSaveForLater";
-import { getUserProfile } from "@/services/user/getUserProfile";
+import { getReviewsByUserId } from "@/services/reviews/getReviewsByUserId";
+import { getUserById } from "@/services/user/getUserById";
+import { logger } from "@/utils/logger/logger";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Alert, ScrollView, Text, View } from "react-native";
@@ -27,15 +28,17 @@ export default function Profile() {
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["user-profile", user?.uid],
-    queryFn: () => getUserProfile(user!.uid),
+    queryFn: () => getUserById(),
     enabled: !!user?.uid,
   });
 
   const { data: recentReviews, isLoading: isLoadingReviews } = useQuery({
     queryKey: ["user-recent-reviews", user?.uid],
-    queryFn: () => getUserRecentReviews(user!.uid, 3),
+    queryFn: () => getReviewsByUserId(user!.uid, 3),
     enabled: !!user?.uid,
   });
+
+  logger.log("Profile", {  recentReviews });
 
   const {
     data: saveForLater,
@@ -45,7 +48,7 @@ export default function Profile() {
     refetch: refetchSaveForLater,
   } = useQuery({
     queryKey: ["save-for-later", user?.uid],
-    queryFn: () => getUserSaveForLater(user!.uid, 3),
+    queryFn: () => getListenLaterByUserId(),
     enabled: !!user?.uid,
   });
 
@@ -81,15 +84,15 @@ export default function Profile() {
       >
         {/* HEADER */}
         <View style={profileStyles.header}>
-          <ProfilePic avatar={avatar} user={profile} />
+          <ProfilePic avatar={avatar} userUrl={profile?.avatar_url} />
           <HeaderName user={profile} />
         </View>
 
         {/* STATS */}
         <View style={profileStyles.stats}>
-          <Stat value={profile?.reviewsCount} label="Reviews" />
+          <Stat value={recentReviews?.length} label="Reviews" />
           <Stat
-            value={profile?.listenLaterCount ? profile?.listenLaterCount : 0}
+            value={saveForLater?.length}
             label="To listen"
           />
         </View>
@@ -100,7 +103,7 @@ export default function Profile() {
           )}
 
           {recentReviews?.map((review) => (
-            <ReviewCard key={review.albumId} item={review} />
+            <ReviewCard key={review.albumId?.toString()} item={review} />
           ))}
         </Section>
 

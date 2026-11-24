@@ -1,7 +1,7 @@
 import { SearchBar } from "@/components/SearchBar";
 import { DesignTokens } from "@/constants/theme";
-import { getTopAlbums } from "@/services/album/getTopAlbums";
-import { searchAlbums } from "@/services/album/searchAlbum";
+import { getTopAlbums } from "@/services/providers/deezer/getTopAlbums";
+import { searchAlbums } from "@/services/providers/deezer/searchAlbum";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";

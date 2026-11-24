@@ -1,11 +1,11 @@
 // app/album/rate.tsx
-import { RatingInput } from "@/components/RatingInput";
 import { Button } from "@/components/Button";
+import { RatingInput } from "@/components/RatingInput";
 import { TextField } from "@/components/TextField";
 import { DesignTokens } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { upsertReview } from "@/services/reviews/upsertReview";
-import { getUserAlbumReview } from "@/services/user/getUserAlbumReview";
+import { getReviewByAlbumAndUserId } from "@/services/reviews/getReviewByAlbumAndUserId";
+import { upsertAlbumReview } from "@/services/reviews/upsertAlbumReview";
 import { logger } from "@/utils/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -27,10 +27,9 @@ export default function RateAlbum() {
   const numericAlbumId = Number(albumId);
   const queryClient = useQueryClient();
 
-  // 🔎 Busca a review específica desse álbum
   const { data: existingReview } = useQuery({
     queryKey: ["album-review", user?.uid, numericAlbumId],
-    queryFn: () => getUserAlbumReview(numericAlbumId),
+    queryFn: () => getReviewByAlbumAndUserId(albumId),
     enabled: !!user && !!albumId,
   });
 
@@ -51,30 +50,17 @@ export default function RateAlbum() {
     setLoading(true);
 
     try {
-      const savedReview = await upsertReview({
-        albumId: numericAlbumId,
-        title,
-        artist,
-        cover,
-        rating,
-        comment,
-        ratedAt: new Date().toISOString(),
-      });
+      const savedReview = await upsertAlbumReview(albumId, rating, comment);
 
-      // ✅ Atualiza cache da review do álbum imediatamente
       queryClient.setQueryData(
         ["album-review", user.uid, numericAlbumId],
         savedReview,
       );
 
-      // 🔄 Mantém consistência global
       queryClient.invalidateQueries({
         queryKey: ["user-recent-reviews", user.uid],
       });
 
-      queryClient.invalidateQueries({
-        queryKey: ["user-profile", user.uid],
-      });
     } catch (err) {
       logger.error("Failed to save review", { err });
     } finally {

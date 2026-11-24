@@ -47,3 +47,4 @@ app-example
 .env.local
 
 vynil-506817-be97eb465cd2.json
+service-account.json

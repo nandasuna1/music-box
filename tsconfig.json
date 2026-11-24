@@ -4,7 +4,8 @@
     "strict": true,
     "types": ["jest"],
     "paths": {
-      "@/*": ["./*"],
+      "@/app/*": ["./app/*"],
+      "@/*": ["./src/*"],
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
       "@react-native-google-signin/google-signin": [
         "./node_modules/@react-native-google-signin/google-signin"
